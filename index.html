@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Akamai API Gateway Learning Platform - Course Module Provider">
+    <title>Akamai API Gateway Learning Platform</title>
+
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* CSS Variables for Akamai theming */
+        :root {
+            --primary-color: #0066cc;
+            --secondary-color: #004499;
+            --accent-color: #ff6600;
+            --background-color: #f8fafc;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --hover-color: #0080ff;
+            --active-color: #004499;
+            --header-height: 70px;
+            --navigation-width: 280px;
+            --akamai-blue: #0066cc;
+            --akamai-orange: #ff6600;
+            --akamai-dark-blue: #004499;
+            --akamai-light-blue: #e6f3ff;
+        }
+
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header styling */
+        .app-header {
+            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
+            color: white;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            box-shadow: 0 4px 20px rgba(0, 102, 204, 0.2);
+            position: relative;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            animation: slideInDown 0.8s ease-out;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            margin-right: 24px;
+            animation: fadeInLeft 1s ease-out 0.2s both;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+            margin-right: 15px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+
+        .akamai-logo {
+            height: 35px;
+            width: auto;
+            margin-right: 15px;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+            object-fit: contain;
+        }
+
+        .header-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin: 0;
+            background: linear-gradient(45deg, #ffffff, #e6f3ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .header-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            font-weight: 400;
+            margin-top: 2px;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        /* Main layout */
+        .app-main {
+            display: flex;
+            height: calc(100vh - var(--header-height));
+        }
+
+        /* Navigation panel styling */
+        .navigation-panel {
+            width: var(--navigation-width);
+            background: linear-gradient(180deg, #ffffff, #f8fafc);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            flex-shrink: 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            animation: slideInLeft 0.8s ease-out 0.3s both;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        /* Custom scrollbar for navigation */
+        .navigation-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .navigation-panel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .navigation-panel::-webkit-scrollbar-thumb {
+            background: var(--akamai-blue);
+            border-radius: 3px;
+        }
+
+        .navigation-panel::-webkit-scrollbar-thumb:hover {
+            background: var(--akamai-orange);
+        }
+
+        .navigation-panel.collapsed {
+            width: 60px;
+            border-right: 2px solid var(--akamai-orange);
+        }
+
+        .navigation-panel.collapsed .course-title,
+        .navigation-panel.collapsed .folder-header {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .navigation-panel.collapsed .nav-header {
+            padding: 15px 10px;
+            justify-content: center;
+        }
+
+        .navigation-panel.collapsed .nav-title {
+            opacity: 0;
+        }
+
+        /* Expand button inside collapsed navigation */
+        .expand-button {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--akamai-orange);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 102, 0, 0.4);
+            z-index: 10;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .navigation-panel.collapsed .expand-button {
+            display: flex;
+            animation: pulse-orange 2s ease-in-out infinite;
+        }
+
+        .expand-button:hover {
+            background: #e55a00;
+            transform: translateX(-50%) scale(1.1);
+            animation: none;
+            box-shadow: 0 6px 20px rgba(255, 102, 0, 0.6);
+        }
+
+        @keyframes pulse-orange {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 102, 0, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 0 8px rgba(255, 102, 0, 0);
+            }
+        }
+
+        .navigation-panel.collapsed .course-link {
+            justify-content: center;
+            padding: 15px 10px;
+            position: relative;
+        }
+
+        .navigation-panel.collapsed .course-link:hover::after {
+            content: attr(title);
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--akamai-dark-blue);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+            margin-left: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .navigation-panel.collapsed .course-link:hover::before {
+            content: '';
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-right-color: var(--akamai-dark-blue);
+            margin-left: 4px;
+            z-index: 1000;
+        }
+
+        .navigation-panel.collapsed .course-icon {
+            margin-right: 0;
+        }
+
+        /* Navigation header with toggle */
+        .nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
+            color: white;
+            border-bottom: 2px solid var(--akamai-orange);
+        }
+
+        .nav-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            width: auto;
+            height: auto;
+        }
+
+        .nav-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+
+        .course-list {
+            list-style: none;
+            padding: 10px 0 80px 0; /* Add bottom padding for powered-by section */
+        }
+
+        /* Powered by Whatfix section */
+        .powered-by {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-top: 1px solid var(--border-color);
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 11px;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .powered-by-text {
+            margin-bottom: 5px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .whatfix-logo {
+            height: 35px;
+            width: auto;
+            margin-right: 15px;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+            object-fit: contain;
+        }
+
+        .whatfix-logo:hover {
+            color: var(--akamai-orange);
+            text-decoration: none;
+        }
+
+        .navigation-panel.collapsed .powered-by {
+            padding: 10px 5px;
+        }
+
+        .navigation-panel.collapsed .powered-by-text {
+            display: none;
+        }
+
+        .navigation-panel.collapsed .whatfix-logo {
+            font-size: 10px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+
+        .course-item {
+            margin: 0;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .course-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .course-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .course-item:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .course-item:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .course-item:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .course-item:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        .course-item:nth-child(7) {
+            animation-delay: 0.7s;
+        }
+
+        .course-item:nth-child(8) {
+            animation-delay: 0.8s;
+        }
+
+        .course-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 102, 204, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .course-link:hover::before {
+            left: 100%;
+        }
+
+        .course-link:hover {
+            background: linear-gradient(135deg, var(--akamai-light-blue), rgba(230, 243, 255, 0.8));
+            color: var(--akamai-dark-blue);
+            border-left-color: var(--akamai-orange);
+            transform: translateX(8px);
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.15);
+        }
+
+        .course-link:focus {
+            outline: 2px solid var(--akamai-orange);
+            outline-offset: 2px;
+            background: linear-gradient(135deg, var(--akamai-light-blue), rgba(230, 243, 255, 0.8));
+            color: var(--akamai-dark-blue);
+        }
+
+        .course-link.active {
+            background: linear-gradient(135deg, var(--akamai-light-blue), rgba(230, 243, 255, 0.9));
+            color: var(--akamai-dark-blue);
+            border-left-color: var(--akamai-orange);
+            font-weight: 600;
+            transform: translateX(8px);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.2);
+        }
+
+        .course-icon {
+            margin-right: 15px;
+            width: 24px;
+            text-align: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .course-link:hover .course-icon {
+            transform: scale(1.2) rotate(10deg);
+            color: var(--akamai-orange);
+        }
+
+        .course-title {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Coming Soon styling */
+        .course-link.coming-soon {
+            opacity: 0.6;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .course-link.coming-soon:hover {
+            background: rgba(128, 128, 128, 0.1);
+            color: var(--text-color);
+            border-left-color: #ccc;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .course-link.coming-soon .course-icon {
+            color: #999;
+        }
+
+        .course-link.coming-soon:hover .course-icon {
+            transform: none;
+            color: #999;
+        }
+
+        .course-link.coming-soon::after {
+            content: '';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
+            color: #999;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Content area styling */
+        .content-area {
+            flex: 1;
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out 0.5s both;
+            border-radius: 0 8px 0 0;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.02);
+        }
+
+        #content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            border-radius: 0;
+            transition: all 0.5s ease;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        #content-frame.loading {
+            opacity: 0.7;
+            transform: scale(0.98);
+        }
+
+        /* Enhanced loading indicator */
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .loading-indicator.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(0, 102, 204, 0.2);
+            border-left: 4px solid var(--akamai-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 15px;
+            color: var(--akamai-blue);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Landing page styles */
+        .landing-page {
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100%;
+            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .landing-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .landing-page.active {
+            display: flex;
+        }
+
+        .landing-content {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .landing-logo {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            animation: bounceIn 1.2s ease-out, glow 3s ease-in-out infinite alternate;
+            color: var(--akamai-orange);
+            text-shadow: 0 0 30px rgba(255, 102, 0, 0.5);
+        }
+
+        .landing-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            animation: slideInUp 1s ease-out 0.3s both;
+            line-height: 1.2;
+            background: linear-gradient(45deg, #ffffff, #e6f3ff, #ffffff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: slideInUp 1s ease-out 0.3s both, textShimmer 3s ease-in-out infinite;
+        }
+
+        .landing-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            animation: slideInUp 1s ease-out 0.6s both;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .landing-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto 3rem auto;
+            animation: slideInUp 1s ease-out 0.9s both;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            border-color: var(--akamai-orange);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            color: var(--akamai-orange);
+            transition: all 0.4s ease;
+            text-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2) rotate(10deg);
+            text-shadow: 0 0 30px rgba(255, 102, 0, 0.8);
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-description {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            line-height: 1.7;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-description {
+            opacity: 1;
+        }
+
+        .get-started-btn {
+            margin-top: 2.5rem;
+            padding: 1.2rem 3rem;
+            background: linear-gradient(45deg, var(--akamai-orange), #ff8533);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideInUp 1s ease-out 1.2s both;
+            box-shadow: 0 8px 25px rgba(255, 102, 0, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .get-started-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .get-started-btn:hover::before {
+            left: 100%;
+        }
+
+        .get-started-btn:hover {
+            background: linear-gradient(45deg, #e55a00, #ff6600);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 102, 0, 0.6);
+        }
+
+        /* Modern Animations */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(-50px);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05) translateY(-10px);
+            }
+
+            70% {
+                transform: scale(0.9) translateY(0);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
+            }
+
+            100% {
+                text-shadow: 0 0 40px rgba(255, 102, 0, 0.8), 0 0 60px rgba(255, 102, 0, 0.4);
+            }
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes textShimmer {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Folder styling for navigation */
+        .folder-header {
+            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
+            color: white;
+            border-bottom: 2px solid var(--akamai-orange);
+            padding: 12px 20px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin: 8px 0 0 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 102, 204, 0.2);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .folder-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .folder-header:hover::before {
+            left: 100%;
+        }
+
+        /* Responsive design */
+        @media (max-width: 1024px) {
+            :root {
+                --navigation-width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-header {
+                display: none;
+            }
+
+            .app-main {
+                flex-direction: column;
+            }
+
+            .navigation-panel {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                position: absolute;
+                top: var(--header-height);
+                left: 0;
+                z-index: 50;
+                transform: translateY(-100%);
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .navigation-panel.mobile-open {
+                transform: translateY(0);
+            }
+
+            .navigation-panel.collapsed {
+                width: 100%;
+            }
+
+            .course-list {
+                display: flex;
+                overflow-x: auto;
+                padding: 8px 16px;
+                gap: 8px;
+            }
+
+            .course-item {
+                flex-shrink: 0;
+            }
+
+            .course-link {
+                padding: 8px 16px;
+                border-radius: 6px;
+                border-left: none;
+                white-space: nowrap;
+                min-width: 120px;
+                justify-content: center;
+            }
+
+            .course-link:hover,
+            .course-link.active {
+                border-left: none;
+                border-radius: 6px;
+                transform: translateY(-2px);
+            }
+
+            .course-link.active {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .course-icon {
+                margin-right: 8px;
+            }
+
+            .content-area {
+                height: calc(100vh - var(--header-height));
+                margin-top: 0;
+            }
+
+            /* Landing page responsive adjustments */
+            .landing-page {
+                padding: 15px;
+            }
+
+            .landing-title {
+                font-size: 2rem;
+            }
+
+            .landing-subtitle {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .landing-features {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+                min-height: 160px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-header {
+                padding: 0 16px;
+            }
+
+            .app-header h1 {
+                font-size: 1.1rem;
+            }
+
+            .header-subtitle {
+                font-size: 0.75rem;
+            }
+
+            .akamai-logo {
+                height: 28px;
+                width: auto;
+                margin-right: 8px;
+            }
+
+            .course-list {
+                padding: 8px;
+            }
+
+            .course-link {
+                padding: 10px 15px;
+                font-size: 13px;
+                min-width: 120px;
+                border-radius: 8px;
+            }
+
+            .course-icon {
+                font-size: 16px;
+                margin-right: 8px;
+            }
+
+            /* Mobile landing page adjustments */
+            .landing-page {
+                padding: 15px;
+            }
+
+            .landing-title {
+                font-size: 2rem;
+                line-height: 1.1;
+            }
+
+            .landing-subtitle {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .landing-logo {
+                font-size: 2.8rem;
+                margin-bottom: 1.2rem;
+            }
+
+            .landing-features {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .feature-card {
+                padding: 1.8rem;
+                min-height: 180px;
+            }
+
+            .get-started-btn {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="app-header">
+        <button class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="header-logo">
+            <img src="Akamai_logo.svg.png" alt="Akamai Logo" class="akamai-logo">
+            <div class="header-text">
+                <h1>Akamai Zuplo</h1>
+                <span class="header-subtitle">Learning Platform</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <nav class="navigation-panel" id="navigation-panel">
+            <div class="nav-header">
+                <span class="nav-title">Course Navigation</span>
+                <button class="nav-toggle" id="nav-toggle">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            <button class="expand-button" id="expand-button" title="Expand Navigation">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <ul class="course-list" id="course-list">
+                <!-- Course modules will be dynamically generated -->
+            </ul>
+            <div class="powered-by">
+                <div class="powered-by-text">Powered by</div>
+                <img src="Whatfix_Logo_RGB_Color.png" alt="Whatfix Logo" class="whatfix-logo">
+            </div>
+        </nav>
+
+        <section class="content-area">
+            <div class="loading-indicator" id="loading-indicator">
+                <div class="spinner"></div>
+                <div class="loading-text">Loading course content...</div>
+            </div>
+
+            <div class="landing-page active" id="landing-page">
+                <div class="landing-content">
+                    <div class="landing-logo">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <h1 class="landing-title">Akamai Zuplo Learning Platform</h1>
+                    <p class="landing-subtitle">Master edge computing and API management with interactive, hands-on
+                        learning experiences powered by Akamai's global network</p>
+
+                    <div class="landing-features">
+                        <div class="feature-card">
+                            <i class="feature-icon fas fa-cogs"></i>
+                            <h3 class="feature-title">API Management</h3>
+                            <p class="feature-description">Learn to configure, secure, and optimize your API gateway
+                                with Akamai's edge computing platform and advanced traffic management</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="feature-icon fas fa-code"></i>
+                            <h3 class="feature-title">Developer Portal</h3>
+                            <p class="feature-description">Explore developer portal features and learn to create
+                                engaging API documentation, tools, and developer experiences</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="feature-icon fas fa-shield-alt"></i>
+                            <h3 class="feature-title">Security & Performance</h3>
+                            <p class="feature-description">Implement robust security measures and optimize performance
+                                at the edge with Akamai's advanced protection technologies</p>
+                        </div>
+                    </div>
+
+                    <button class="get-started-btn" onclick="CourseManager.startFirstCourse()">
+                        Start Learning Journey
+                    </button>
+                </div>
+            </div>
+
+            <iframe id="content-frame" src="" title="Course Content"
+                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+                allowfullscreen style="display: none;">
+                <p>Your browser does not support iframes. Please update your browser to view the content.</p>
+            </iframe>
+        </section>
+    </main>
+
+    <script>
+        // Course data structure and configuration
+        const AppConfig = {
+            branding: {
+                title: "Akamai API Gateway Learning Platform"
+            },
+            layout: {
+                navigationWidth: "280px",
+                headerHeight: "70px"
+            },
+            defaultCourse: "api-management", // Start with first beginner process
+            showLandingPage: true
+        };
+
+        // Course data with organized structure and new URLs
+        const courses = [
+            // Beginner Processes folder
+            {
+                id: 'api-management',
+                title: 'API Management',
+                icon: 'fas fa-cogs',
+                url: 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/71181e57-957b-4ecc-adc6-73e826f61cd2/zOJG49Qsbv1ZGA2iTYmftX03pHWh4ONHkTsxV6xcsO9',
+                description: 'Learn API management fundamentals and best practices',
+                folder: 'Beginner Processes'
+            },
+            {
+                id: 'dev-portal-overview',
+                title: 'Dev Portal Overview',
+                icon: 'fas fa-code',
+                url: 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/71181e57-957b-4ecc-adc6-73e826f61cd2/aq4U2XF32o0bnpCzWli8dXPxMqyiYEIdMoNSW97Kvza?_wfx_=22e4b3ad-21ee-49dd-99cd-0de3e29a0dea&_wfx_stage=production&_wfx_state=null',
+                description: 'Explore developer portal features and capabilities',
+                folder: 'Beginner Processes'
+            },
+            {
+                id: 'zuplo-overview',
+                title: 'Zuplo Overview',
+                icon: 'fas fa-rocket',
+                url: 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/71181e57-957b-4ecc-adc6-73e826f61cd2/OW0IpbRt9v1jin5fQGPBOAezyEATSai51KL5g68qGTZ?_wfx_=4b0ea1eb-8da0-4457-9ab6-7cae72e4b6de&_wfx_stage=production&_wfx_state=null',
+                description: 'Get started with Zuplo platform overview',
+                folder: 'Beginner Processes'
+            },
+            // Advanced Processes (coming soon)
+            {
+                id: 'authentication',
+                title: 'Authentication & Security',
+                icon: 'fas fa-shield-alt',
+                description: 'Learn about API authentication methods - Coming Soon',
+                folder: 'Advanced Processes',
+                comingSoon: true
+            },
+            {
+                id: 'rate-limiting',
+                title: 'Rate Limiting',
+                icon: 'fas fa-tachometer-alt',
+                description: 'Managing API traffic and rate limits - Coming Soon',
+                folder: 'Advanced Processes',
+                comingSoon: true
+            },
+            {
+                id: 'monitoring',
+                title: 'Monitoring & Analytics',
+                icon: 'fas fa-chart-line',
+                description: 'Track API performance and usage - Coming Soon',
+                folder: 'Advanced Processes',
+                comingSoon: true
+            }
+        ];
+
+        // Course URL mapping for easy access
+        const courseUrls = {
+            'api-management': 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/71181e57-957b-4ecc-adc6-73e826f61cd2/zOJG49Qsbv1ZGA2iTYmftX03pHWh4ONHkTsxV6xcsO9',
+            'dev-portal-overview': 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/71181e57-957b-4ecc-adc6-73e826f61cd2/aq4U2XF32o0bnpCzWli8dXPxMqyiYEIdMoNSW97Kvza?_wfx_=22e4b3ad-21ee-49dd-99cd-0de3e29a0dea&_wfx_stage=production&_wfx_state=null',
+            'zuplo-overview': 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/71181e57-957b-4ecc-adc6-73e826f61cd2/OW0IpbRt9v1jin5fQGPBOAezyEATSai51KL5g68qGTZ?_wfx_=4b0ea1eb-8da0-4457-9ab6-7cae72e4b6de&_wfx_stage=production&_wfx_state=null',
+            'authentication': 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/authentication-module/secure-api-endpoints',
+            'rate-limiting': 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/rate-limiting-module/traffic-control',
+            'monitoring': 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/monitoring-module/api-analytics'
+        };
+
+        // Link interceptor for handling new tab links within iframes
+        const LinkInterceptor = {
+            // Initialize link interception
+            init() {
+                this.setupMessageListener();
+                this.setupIframeObserver();
+            },
+
+            // Set up message listener for iframe communication
+            setupMessageListener() {
+                window.addEventListener('message', (event) => {
+                    // Handle different message types from iframe
+                    if (event.data && typeof event.data === 'object') {
+                        switch (event.data.type) {
+                            case 'linkClick':
+                                this.handleLinkClick(event.data.url, event.data.target);
+                                break;
+                            case 'newWindow':
+                                this.handleNewWindow(event.data.url);
+                                break;
+                        }
+                    }
+                });
+            },
+
+            // Set up iframe observer to detect navigation attempts
+            setupIframeObserver() {
+                const iframe = document.getElementById('content-frame');
+                if (!iframe) return;
+
+                // Override window.open for the iframe context when possible
+                iframe.addEventListener('load', () => {
+                    try {
+                        const iframeWindow = iframe.contentWindow;
+                        if (iframeWindow && iframeWindow.location.origin === window.location.origin) {
+                            // Only works for same-origin content
+                            this.injectLinkHandler(iframeWindow);
+                        } else {
+                            console.log('Cross-origin iframe detected, using alternative link handling');
+                        }
+                    } catch (error) {
+                        console.log('Cannot access iframe content due to cross-origin restrictions');
+                    }
+                });
+            },
+
+            // Handle intercepted link clicks
+            handleLinkClick(url, target) {
+                if (target === '_blank' || target === '_new') {
+                    console.log('Akamai Link Handler: Intercepting new tab link:', url);
+                    CourseManager.loadExternalUrl(url);
+                } else {
+                    console.log('Akamai Link Handler: Allowing same-frame navigation:', url);
+                }
+            },
+
+            // Handle new window requests
+            handleNewWindow(url) {
+                console.log('Akamai Link Handler: Intercepting new window request:', url);
+                CourseManager.loadExternalUrl(url);
+            },
+
+            // Inject link handling script into same-origin iframe
+            injectLinkHandler(iframeWindow) {
+                try {
+                    const script = iframeWindow.document.createElement('script');
+                    script.textContent = `
+                        (function() {
+                            console.log('Akamai Link Handler: Initializing advanced link interception');
+                            
+                            // Override link click behavior with more comprehensive targeting
+                            document.addEventListener('click', function(event) {
+                                const link = event.target.closest('a');
+                                if (link && link.href) {
+                                    const target = link.target || link.getAttribute('target') || '_self';
+                                    const href = link.href;
+                                    
+                                    // Check for various new tab/window indicators
+                                    if (target === '_blank' || 
+                                        target === '_new' || 
+                                        link.hasAttribute('target') && link.getAttribute('target') !== '_self' ||
+                                        event.ctrlKey || 
+                                        event.metaKey ||
+                                        event.button === 1) {
+                                        
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        
+                                        console.log('Akamai Link Handler: Intercepting new tab link:', href);
+                                        window.parent.postMessage({
+                                            type: 'linkClick',
+                                            url: href,
+                                            target: target,
+                                            intercepted: true
+                                        }, '*');
+                                        
+                                        return false;
+                                    }
+                                }
+                            }, true);
+                            
+                            // Override window.open with enhanced detection
+                            const originalOpen = window.open;
+                            window.open = function(url, target, features) {
+                                console.log('Akamai Link Handler: Intercepting window.open call:', url);
+                                
+                                if (target === '_blank' || !target || target === '_new') {
+                                    window.parent.postMessage({
+                                        type: 'newWindow',
+                                        url: url,
+                                        target: target || '_blank',
+                                        intercepted: true
+                                    }, '*');
+                                    
+                                    // Return a mock window object to prevent errors
+                                    return {
+                                        closed: false,
+                                        focus: function() { console.log('Mock window focus called'); },
+                                        blur: function() { console.log('Mock window blur called'); },
+                                        close: function() { console.log('Mock window close called'); },
+                                        postMessage: function() { console.log('Mock window postMessage called'); }
+                                    };
+                                }
+                                return originalOpen.call(this, url, target, features);
+                            };
+                            
+                            // Also intercept form submissions that target new windows
+                            document.addEventListener('submit', function(event) {
+                                const form = event.target;
+                                if (form && form.target && (form.target === '_blank' || form.target === '_new')) {
+                                    event.preventDefault();
+                                    console.log('Akamai Link Handler: Intercepting form submission to new window');
+                                    
+                                    // Convert form to URL and send to parent
+                                    const formData = new FormData(form);
+                                    const params = new URLSearchParams(formData);
+                                    const url = form.action + '?' + params.toString();
+                                    
+                                    window.parent.postMessage({
+                                        type: 'newWindow',
+                                        url: url,
+                                        target: form.target,
+                                        intercepted: true
+                                    }, '*');
+                                }
+                            }, true);
+                            
+                            console.log('Akamai Link Handler: Advanced link interception initialized successfully');
+                        })();
+                    `;
+
+                    if (iframeWindow.document.head) {
+                        iframeWindow.document.head.appendChild(script);
+                    } else if (iframeWindow.document.body) {
+                        iframeWindow.document.body.appendChild(script);
+                    } else {
+                        // If neither head nor body exists yet, wait for DOM ready
+                        iframeWindow.document.addEventListener('DOMContentLoaded', () => {
+                            (iframeWindow.document.head || iframeWindow.document.body).appendChild(script);
+                        });
+                    }
+
+                    console.log('Akamai Link Handler: Enhanced link handler injected successfully');
+                } catch (error) {
+                    console.error('Akamai Link Handler: Failed to inject enhanced link handler:', error);
+                }
+            }
+        };
+
+        // CourseManager object for managing course navigation and loading
+        const CourseManager = {
+            currentCourse: null,
+            iframe: null,
+            landingPage: null,
+            loadingIndicator: null,
+
+            // Initialize the course manager
+            init() {
+                this.iframe = document.getElementById('content-frame');
+                this.landingPage = document.getElementById('landing-page');
+                this.loadingIndicator = document.getElementById('loading-indicator');
+                this.setupEventListeners();
+                this.setupIframeHandlers();
+
+                // Show landing page by default instead of loading a course
+                if (AppConfig.showLandingPage) {
+                    this.showLandingPage();
+                } else {
+                    this.loadDefaultCourse();
+                }
+            },
+
+            // Show loading indicator
+            showLoading() {
+                if (this.loadingIndicator) {
+                    this.loadingIndicator.classList.add('active');
+                }
+            },
+
+            // Hide loading indicator
+            hideLoading() {
+                if (this.loadingIndicator) {
+                    this.loadingIndicator.classList.remove('active');
+                }
+            },
+
+            // Show the landing page
+            showLandingPage() {
+                if (this.landingPage && this.iframe) {
+                    this.landingPage.style.display = 'flex';
+                    this.iframe.style.display = 'none';
+                    this.currentCourse = null;
+                    this.updateActiveState(null);
+                }
+            },
+
+            // Hide landing page and show iframe
+            hideLandingPage() {
+                if (this.landingPage && this.iframe) {
+                    this.landingPage.style.display = 'none';
+                    this.iframe.style.display = 'block';
+                }
+            },
+
+            // Start the first course (called from landing page button)
+            startFirstCourse() {
+                const firstCourse = courses.find(c => c.folder === 'Beginner Processes');
+                if (firstCourse) {
+                    this.loadCourse(firstCourse.id);
+                } else {
+                    // Fallback to first available course
+                    this.loadCourse(courses[0].id);
+                }
+            },
+
+            // Set up event listeners for course navigation
+            setupEventListeners() {
+                const courseList = document.getElementById('course-list');
+                if (courseList) {
+                    courseList.addEventListener('click', (event) => {
+                        const courseLink = event.target.closest('.course-link');
+                        if (courseLink) {
+                            event.preventDefault();
+                            const courseId = courseLink.dataset.courseId;
+                            this.loadCourse(courseId);
+                        }
+                    });
+                }
+            },
+
+            // Set up iframe-specific event handlers
+            setupIframeHandlers() {
+                if (this.iframe) {
+                    // Handle iframe load events
+                    this.iframe.addEventListener('load', () => {
+                        console.log('Iframe content loaded');
+                    });
+
+                    // Handle iframe errors
+                    this.iframe.addEventListener('error', (event) => {
+                        console.error('Iframe loading error:', event);
+                        this.showErrorMessage('Failed to load content');
+                    });
+                }
+            },
+
+            // Load a specific course by ID
+            loadCourse(courseId) {
+                const course = courses.find(c => c.id === courseId);
+                if (!course) {
+                    console.error(`Course with ID "${courseId}" not found`);
+                    return false;
+                }
+
+                // Check if course is coming soon
+                if (course.comingSoon) {
+                    console.log(`Course "${course.title}" is coming soon`);
+                    this.showComingSoonMessage(course);
+                    return false;
+                }
+
+                try {
+                    // Hide landing page and show iframe
+                    this.hideLandingPage();
+
+                    // Show loading indicator
+                    this.showLoading();
+
+                    // Add loading state
+                    if (this.iframe) {
+                        this.iframe.classList.add('loading');
+                        this.iframe.src = course.url;
+
+                        // Remove loading state after iframe loads
+                        const handleLoad = () => {
+                            this.iframe.classList.remove('loading');
+                            this.hideLoading();
+                            this.iframe.removeEventListener('load', handleLoad);
+                        };
+                        this.iframe.addEventListener('load', handleLoad);
+                    }
+
+                    // Update current course
+                    this.currentCourse = courseId;
+
+                    // Update active state in navigation with animation
+                    this.updateActiveState(courseId);
+
+                    console.log(`Loaded course: ${course.title}`);
+                    return true;
+                } catch (error) {
+                    console.error('Failed to load course:', error);
+                    this.hideLoading();
+                    this.showErrorMessage(`Unable to load course: ${course.title}`);
+                    return false;
+                }
+            },
+
+            // Load an external URL in the iframe (for intercepted new tab links)
+            loadExternalUrl(url) {
+                try {
+                    if (this.iframe && url) {
+                        console.log(`Loading external URL: ${url}`);
+                        this.iframe.src = url;
+
+                        // Clear current course since we're navigating to external content
+                        this.currentCourse = null;
+                        this.updateActiveState(null);
+
+                        return true;
+                    }
+                    return false;
+                } catch (error) {
+                    console.error('Failed to load external URL:', error);
+                    this.showErrorMessage(`Unable to load external content: ${url}`);
+                    return false;
+                }
+            },
+
+            // Load the default course on initialization
+            loadDefaultCourse() {
+                const defaultCourseId = AppConfig.defaultCourse || (courses.length > 0 ? courses[0].id : null);
+                if (defaultCourseId) {
+                    this.loadCourse(defaultCourseId);
+                }
+            },
+
+            // Update active state for navigation items
+            updateActiveState(activeCourseId) {
+                NavigationRenderer.highlightActiveCourse(activeCourseId);
+            },
+
+            // Get current course information
+            getCurrentCourse() {
+                return courses.find(c => c.id === this.currentCourse);
+            },
+
+            // Show error message (basic implementation)
+            showErrorMessage(message) {
+                console.error(message);
+                // Could be enhanced with a proper error display UI
+                if (this.iframe) {
+                    this.iframe.src = 'data:text/html,<html><body><h2>Error</h2><p>' + encodeURIComponent(message) + '</p></body></html>';
+                }
+            },
+
+            // Show coming soon message
+            showComingSoonMessage(course) {
+                this.hideLandingPage();
+                if (this.iframe) {
+                    const comingSoonHtml = `
+                        <html>
+                        <head>
+                            <style>
+                                body {
+                                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                                    background: linear-gradient(135deg, #0066cc, #004499);
+                                    color: white;
+                                    margin: 0;
+                                    padding: 40px;
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: center;
+                                    align-items: center;
+                                    min-height: 100vh;
+                                    text-align: center;
+                                }
+                                .coming-soon-container {
+                                    background: rgba(255, 255, 255, 0.1);
+                                    backdrop-filter: blur(10px);
+                                    border-radius: 20px;
+                                    padding: 60px 40px;
+                                    border: 1px solid rgba(255, 255, 255, 0.2);
+                                    max-width: 500px;
+                                }
+                                .icon {
+                                    font-size: 4rem;
+                                    margin-bottom: 2rem;
+                                    color: #ff6600;
+                                }
+                                .title {
+                                    font-size: 2.5rem;
+                                    font-weight: 700;
+                                    margin-bottom: 1rem;
+                                }
+                                .subtitle {
+                                    font-size: 1.2rem;
+                                    opacity: 0.9;
+                                    margin-bottom: 2rem;
+                                }
+                                .description {
+                                    font-size: 1rem;
+                                    opacity: 0.8;
+                                    line-height: 1.6;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="coming-soon-container">
+                                <div class="icon"><i class="far fa-tv-retro"></i></div>
+                                <h1 class="title">${course.title}</h1>
+                                <p class="subtitle">Coming Soon</p>
+                                <p class="description">This advanced course is currently in development. We're working hard to bring you comprehensive content on ${course.title.toLowerCase()}. Stay tuned for updates!</p>
+                            </div>
+                        </body>
+                        </html>
+                    `;
+                    this.iframe.src = 'data:text/html,' + encodeURIComponent(comingSoonHtml);
+                }
+            },
+
+            // Get all available courses
+            getAllCourses() {
+                return courses;
+            }
+        };
+
+        // Navigation rendering functionality
+        const NavigationRenderer = {
+            // Generate navigation HTML from course data
+            renderNavigation() {
+                const courseList = document.getElementById('course-list');
+                if (!courseList) {
+                    console.error('Course list element not found');
+                    return;
+                }
+
+                // Clear existing content
+                courseList.innerHTML = '';
+
+                // Group courses by folder
+                const coursesByFolder = this.groupCoursesByFolder();
+
+                // Render each folder and its courses
+                Object.keys(coursesByFolder).forEach(folderName => {
+                    // Add folder header
+                    const folderHeader = this.createFolderHeader(folderName);
+                    courseList.appendChild(folderHeader);
+
+                    // Add courses in this folder
+                    coursesByFolder[folderName].forEach(course => {
+                        const listItem = this.createCourseItem(course);
+                        courseList.appendChild(listItem);
+                    });
+                });
+            },
+
+            // Group courses by their folder property
+            groupCoursesByFolder() {
+                const grouped = {};
+                courses.forEach(course => {
+                    const folder = course.folder || 'Other';
+                    if (!grouped[folder]) {
+                        grouped[folder] = [];
+                    }
+                    grouped[folder].push(course);
+                });
+                return grouped;
+            },
+
+            // Create folder header element
+            createFolderHeader(folderName) {
+                const headerItem = document.createElement('li');
+                headerItem.className = 'folder-header';
+                headerItem.textContent = folderName;
+                return headerItem;
+            },
+
+            // Create individual course item HTML
+            createCourseItem(course) {
+                const listItem = document.createElement('li');
+                listItem.className = 'course-item';
+
+                const courseLink = document.createElement('a');
+                courseLink.className = course.comingSoon ? 'course-link coming-soon' : 'course-link';
+                courseLink.href = '#';
+                courseLink.dataset.courseId = course.id;
+                courseLink.title = course.description || course.title;
+
+                // Create icon element
+                const iconElement = document.createElement('i');
+                iconElement.className = `course-icon ${course.icon}`;
+                iconElement.setAttribute('aria-hidden', 'true');
+
+                // Create title element
+                const titleElement = document.createElement('span');
+                titleElement.className = 'course-title';
+                titleElement.textContent = course.title;
+
+                // Assemble the course link
+                courseLink.appendChild(iconElement);
+                courseLink.appendChild(titleElement);
+                listItem.appendChild(courseLink);
+
+                return listItem;
+            },
+
+            // Highlight active course
+            highlightActiveCourse(activeCourseId) {
+                const courseLinks = document.querySelectorAll('.course-link');
+                courseLinks.forEach(link => {
+                    if (link.dataset.courseId === activeCourseId) {
+                        link.classList.add('active');
+                        link.setAttribute('aria-current', 'page');
+                    } else {
+                        link.classList.remove('active');
+                        link.removeAttribute('aria-current');
+                    }
+                });
+            },
+
+            // Add keyboard navigation support
+            setupKeyboardNavigation() {
+                const courseLinks = document.querySelectorAll('.course-link');
+                courseLinks.forEach((link, index) => {
+                    link.addEventListener('keydown', (event) => {
+                        switch (event.key) {
+                            case 'ArrowDown':
+                                event.preventDefault();
+                                const nextIndex = (index + 1) % courseLinks.length;
+                                courseLinks[nextIndex].focus();
+                                break;
+                            case 'ArrowUp':
+                                event.preventDefault();
+                                const prevIndex = (index - 1 + courseLinks.length) % courseLinks.length;
+                                courseLinks[prevIndex].focus();
+                                break;
+                            case 'Enter':
+                            case ' ':
+                                event.preventDefault();
+                                link.click();
+                                break;
+                        }
+                    });
+                });
+            }
+        };
+
+        // Navigation toggle functionality
+        const NavigationToggle = {
+            init() {
+                this.setupToggleListeners();
+            },
+
+            setupToggleListeners() {
+                const navToggle = document.getElementById('nav-toggle');
+                const menuToggle = document.getElementById('menu-toggle');
+                const navigationPanel = document.getElementById('navigation-panel');
+
+                // Desktop navigation toggle
+                if (navToggle && navigationPanel) {
+                    navToggle.addEventListener('click', () => {
+                        navigationPanel.classList.toggle('collapsed');
+                        const icon = navToggle.querySelector('i');
+                        if (navigationPanel.classList.contains('collapsed')) {
+                            icon.className = 'fas fa-chevron-right';
+                            navToggle.title = 'Expand Navigation';
+                        } else {
+                            icon.className = 'fas fa-chevron-left';
+                            navToggle.title = 'Collapse Navigation';
+                        }
+                    });
+
+                    // Set initial tooltip
+                    navToggle.title = 'Collapse Navigation';
+                }
+
+                // Handle expand button click
+                const expandButton = document.getElementById('expand-button');
+                if (expandButton && navigationPanel) {
+                    expandButton.addEventListener('click', () => {
+                        navigationPanel.classList.remove('collapsed');
+                        const icon = navToggle.querySelector('i');
+                        icon.className = 'fas fa-chevron-left';
+                        navToggle.title = 'Collapse Navigation';
+                    });
+                }
+
+                // Mobile menu toggle
+                if (menuToggle && navigationPanel) {
+                    menuToggle.addEventListener('click', () => {
+                        navigationPanel.classList.toggle('mobile-open');
+                        const icon = menuToggle.querySelector('i');
+                        if (navigationPanel.classList.contains('mobile-open')) {
+                            icon.className = 'fas fa-times';
+                            menuToggle.title = 'Close Menu';
+                        } else {
+                            icon.className = 'fas fa-bars';
+                            menuToggle.title = 'Open Menu';
+                        }
+                    });
+
+                    // Set initial tooltip
+                    menuToggle.title = 'Open Menu';
+                }
+
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', (event) => {
+                    if (window.innerWidth <= 768 && navigationPanel && navigationPanel.classList.contains('mobile-open')) {
+                        if (!navigationPanel.contains(event.target) && !menuToggle.contains(event.target)) {
+                            navigationPanel.classList.remove('mobile-open');
+                            const icon = menuToggle.querySelector('i');
+                            icon.className = 'fas fa-bars';
+                        }
+                    }
+                });
+
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 768 && navigationPanel) {
+                        navigationPanel.classList.remove('mobile-open');
+                        const menuIcon = menuToggle?.querySelector('i');
+                        if (menuIcon) {
+                            menuIcon.className = 'fas fa-bars';
+                        }
+                    }
+                });
+            }
+        };
+
+        // Application initialization
+        document.addEventListener('DOMContentLoaded', function () {
+            // Render navigation from course data
+            NavigationRenderer.renderNavigation();
+
+            // Initialize course manager
+            CourseManager.init();
+
+            // Initialize link interceptor for handling new tab links
+            LinkInterceptor.init();
+
+            // Setup keyboard navigation
+            NavigationRenderer.setupKeyboardNavigation();
+
+            // Initialize navigation toggle
+            NavigationToggle.init();
+
+            console.log('Akamai API Gateway Learning Platform initialized successfully');
+        });
+    </script>
+</body>
+
+</html>
