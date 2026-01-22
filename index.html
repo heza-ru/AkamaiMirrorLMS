@@ -21,12 +21,48 @@
             --border-color: #e2e8f0;
             --hover-color: #0080ff;
             --active-color: #004499;
-            --header-height: 70px;
-            --navigation-width: 280px;
+            --header-height: 75px;
+            --navigation-width: 300px;
             --akamai-blue: #0066cc;
             --akamai-orange: #ff6600;
             --akamai-dark-blue: #004499;
             --akamai-light-blue: #e6f3ff;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --card-background: #ffffff;
+            --nav-background: linear-gradient(180deg, #ffffff, #f8fafc);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-tertiary: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.08);
+            --shadow-hard: 0 16px 48px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Dark Mode Variables */
+        [data-theme="dark"] {
+            --background-color: #0a0e27;
+            --text-color: #e2e8f0;
+            --border-color: #1e293b;
+            --card-background: #151b35;
+            --nav-background: linear-gradient(180deg, #151b35, #0a0e27);
+            --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-hard: 0 16px 48px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Animated Gradient Background */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animated-bg {
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
         }
 
         /* Reset and base styles */
@@ -37,26 +73,58 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', Oxygen, Ubuntu, Cantarell, sans-serif;
             background-color: var(--background-color);
             color: var(--text-color);
             height: 100vh;
             overflow: hidden;
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
 
-        /* Header styling */
+        /* Animated Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 102, 0, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        [data-theme="dark"] body::before {
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 102, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(118, 75, 162, 0.08) 0%, transparent 50%);
+        }
+
+        .app-main, .app-header {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header styling - Modern */
         .app-header {
-            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
+            background: linear-gradient(135deg, var(--akamai-blue) 0%, var(--akamai-dark-blue) 100%);
             color: white;
             height: var(--header-height);
             display: flex;
             align-items: center;
-            padding: 0 24px;
-            box-shadow: 0 4px 20px rgba(0, 102, 204, 0.2);
+            padding: 0 28px;
+            box-shadow: 0 4px 24px rgba(0, 102, 204, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1);
             position: relative;
             z-index: 100;
             backdrop-filter: blur(10px);
             animation: slideInDown 0.8s ease-out;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .header-logo {
@@ -85,10 +153,10 @@
         }
 
         .akamai-logo {
-            height: 35px;
+            height: 38px;
             width: auto;
-            margin-right: 15px;
-            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+            margin-right: 16px;
+            filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.15));
             object-fit: contain;
         }
 
@@ -98,23 +166,566 @@
         }
 
         .app-header h1 {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            letter-spacing: -0.025em;
+            letter-spacing: -0.5px;
             margin: 0;
-            background: linear-gradient(45deg, #ffffff, #e6f3ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: white;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             animation: fadeInUp 1s ease-out 0.4s both;
         }
 
+        /* Header Controls */
+        .header-controls {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+        }
+
+        .header-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Progress Stats */
+        .progress-stats {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .progress-stats i {
+            color: var(--akamai-orange);
+        }
+
+        /* Recently Viewed Dropdown */
+        .recent-dropdown {
+            position: relative;
+        }
+
+        .recent-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            min-width: 280px;
+            max-height: 400px;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            border: 1px solid var(--border-color);
+        }
+
+        .recent-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .recent-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .recent-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .recent-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .recent-item:last-child {
+            border-bottom: none;
+        }
+
+        .recent-item:hover {
+            background: rgba(0, 102, 204, 0.08);
+        }
+
+        .recent-item i {
+            color: var(--akamai-blue);
+            width: 20px;
+            text-align: center;
+        }
+
+        .recent-item-text {
+            flex: 1;
+            font-size: 13px;
+        }
+
+        .recent-item-time {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .recent-empty {
+            padding: 32px 16px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        /* Badge Count */
+        .badge-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(135deg, #f5576c, #f093fb);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Modal Overlay - Awwwards Style */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 14, 39, 0.85);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        [data-theme="light"] .modal-overlay {
+            background: rgba(248, 250, 252, 0.9);
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background: var(--card-background);
+            border-radius: 24px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3);
+            transform: translateY(40px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            padding: 32px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-close {
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--error-color);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 32px;
+            overflow-y: auto;
+            max-height: calc(85vh - 200px);
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: var(--akamai-blue);
+            border-radius: 4px;
+        }
+
+        .modal-footer {
+            padding: 24px 32px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .version-info {
+            margin: 0;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        /* Settings Sections */
+        .settings-section {
+            margin-bottom: 40px;
+        }
+
+        .settings-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-section h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 24px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+        }
+
+        .settings-section h3 i {
+            color: var(--akamai-orange);
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .setting-item {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .setting-item:hover {
+            background: rgba(102, 126, 234, 0.08);
+            transform: translateX(4px);
+        }
+
+        .setting-label {
+            flex: 1;
+        }
+
+        .setting-label span {
+            display: block;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .setting-label small {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        /* Theme Selector */
+        .theme-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .theme-option {
+            padding: 12px 20px;
+            border: 2px solid var(--border-color);
+            background: transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .theme-option i {
+            font-size: 20px;
+        }
+
+        .theme-option:hover {
+            border-color: var(--akamai-blue);
+            transform: translateY(-2px);
+        }
+
+        .theme-option.active {
+            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 32px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #cbd5e1;
+            border-radius: 34px;
+            transition: 0.4s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.4s;
+        }
+
+        input:checked + .toggle-slider {
+            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Buttons */
+        .btn-secondary, .btn-danger {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f5576c, #f093fb);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(245, 87, 108, 0.3);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.2);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Achievements Grid */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .achievement-card {
+            background: var(--card-background);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .achievement-card.unlocked {
+            border-color: var(--akamai-orange);
+            background: linear-gradient(135deg, rgba(255, 102, 0, 0.05), rgba(255, 102, 0, 0.1));
+        }
+
+        .achievement-card.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .achievement-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .achievement-card.unlocked .achievement-icon {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .achievement-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .achievement-description {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
         .header-subtitle {
-            font-size: 0.85rem;
-            opacity: 0.9;
+            font-size: 0.8rem;
+            opacity: 0.95;
             font-weight: 400;
-            margin-top: 2px;
+            margin-top: 3px;
+            letter-spacing: 0.3px;
             animation: fadeInUp 1s ease-out 0.6s both;
+            color: rgba(255, 255, 255, 0.95);
         }
 
         /* Main layout */
@@ -126,9 +737,10 @@
         /* Navigation panel styling */
         .navigation-panel {
             width: var(--navigation-width);
-            background: linear-gradient(180deg, #ffffff, #f8fafc);
+            background: var(--nav-background);
             border-right: 1px solid var(--border-color);
             overflow-y: auto;
+            overflow-x: hidden;
             flex-shrink: 0;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
             animation: slideInLeft 0.8s ease-out 0.3s both;
@@ -259,81 +871,88 @@
             margin-right: 0;
         }
 
-        /* Navigation header with toggle */
+        /* Navigation header with toggle - Modern */
         .nav-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 15px 20px;
-            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
+            padding: 16px 20px;
+            background: linear-gradient(135deg, var(--akamai-blue) 0%, var(--akamai-dark-blue) 100%);
             color: white;
             border-bottom: 2px solid var(--akamai-orange);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .nav-title {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1.2px;
             transition: opacity 0.3s ease;
         }
 
         .nav-toggle {
-            background: none;
+            background: rgba(255, 255, 255, 0.1);
             border: none;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
+            padding: 8px 10px;
+            border-radius: 8px;
             transition: all 0.3s ease;
             width: auto;
             height: auto;
         }
 
         .nav-toggle:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .nav-toggle:active {
+            transform: scale(0.95);
         }
 
         .course-list {
             list-style: none;
-            padding: 10px 0 80px 0; /* Add bottom padding for powered-by section */
+            padding: 0 0 80px 0;
+            margin: 0;
         }
 
-        /* Powered by Whatfix section */
+        /* Powered by Whatfix section - Modern */
         .powered-by {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-            border-top: 1px solid var(--border-color);
-            padding: 15px 20px;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.98), rgba(226, 232, 240, 0.98));
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(0, 102, 204, 0.1);
+            padding: 14px 20px;
             text-align: center;
-            font-size: 11px;
+            font-size: 10px;
             color: #64748b;
             transition: all 0.3s ease;
         }
 
         .powered-by-text {
-            margin-bottom: 5px;
-            font-weight: 500;
+            margin-bottom: 6px;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
 
         .whatfix-logo {
-            height: 35px;
+            height: 32px;
             width: auto;
-            margin-right: 15px;
-            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08));
             object-fit: contain;
+            transition: all 0.3s ease;
         }
 
         .whatfix-logo:hover {
-            color: var(--akamai-orange);
-            text-decoration: none;
+            filter: drop-shadow(0 4px 12px rgba(255, 102, 0, 0.3));
+            transform: scale(1.05);
         }
 
         .navigation-panel.collapsed .powered-by {
@@ -390,14 +1009,16 @@
         .course-link {
             display: flex;
             align-items: center;
-            padding: 15px 20px;
+            padding: 14px 20px;
             text-decoration: none;
             color: var(--text-color);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border-left: 4px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 3px solid transparent;
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            margin: 2px 8px;
+            border-radius: 0 10px 10px 0;
         }
 
         .course-link::before {
@@ -407,8 +1028,8 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 102, 204, 0.1), transparent);
-            transition: left 0.6s ease;
+            background: linear-gradient(90deg, transparent, rgba(0, 102, 204, 0.08), transparent);
+            transition: left 0.5s ease;
         }
 
         .course-link:hover::before {
@@ -416,51 +1037,105 @@
         }
 
         .course-link:hover {
-            background: linear-gradient(135deg, var(--akamai-light-blue), rgba(230, 243, 255, 0.8));
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.08), rgba(230, 243, 255, 0.9));
             color: var(--akamai-dark-blue);
             border-left-color: var(--akamai-orange);
-            transform: translateX(8px);
-            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.15);
+            transform: translateX(4px);
+            box-shadow: 0 3px 12px rgba(0, 102, 204, 0.12);
         }
 
         .course-link:focus {
             outline: 2px solid var(--akamai-orange);
-            outline-offset: 2px;
-            background: linear-gradient(135deg, var(--akamai-light-blue), rgba(230, 243, 255, 0.8));
+            outline-offset: -2px;
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.08), rgba(230, 243, 255, 0.9));
             color: var(--akamai-dark-blue);
         }
 
         .course-link.active {
-            background: linear-gradient(135deg, var(--akamai-light-blue), rgba(230, 243, 255, 0.9));
-            color: var(--akamai-dark-blue);
+            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
+            color: white;
             border-left-color: var(--akamai-orange);
             font-weight: 600;
-            transform: translateX(8px);
-            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.2);
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(0, 102, 204, 0.25);
+        }
+
+        .course-link.active .course-icon {
+            color: var(--akamai-orange);
         }
 
         .course-icon {
-            margin-right: 15px;
-            width: 24px;
+            margin-right: 14px;
+            width: 22px;
             text-align: center;
-            font-size: 18px;
+            font-size: 17px;
             transition: all 0.3s ease;
             flex-shrink: 0;
         }
 
         .course-link:hover .course-icon {
-            transform: scale(1.2) rotate(10deg);
+            transform: scale(1.15) rotate(5deg);
+            color: var(--akamai-orange);
+        }
+
+        .course-link.active:hover .course-icon {
             color: var(--akamai-orange);
         }
 
         .course-title {
             flex: 1;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 500;
             transition: all 0.3s ease;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            letter-spacing: 0.2px;
+        }
+
+        .course-link.active .course-title {
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        /* Course Status Badge */
+        .course-badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .course-badge.completed {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .course-badge.in-progress {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .course-badge.new {
+            background: var(--akamai-orange);
+            color: white;
+        }
+
+        /* Completion Checkmark */
+        .course-check {
+            color: var(--success-color);
+            font-size: 16px;
+            margin-left: 8px;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .course-link.completed .course-check {
+            opacity: 1;
+            transform: scale(1);
         }
 
         /* Coming Soon styling */
@@ -500,15 +1175,14 @@
             letter-spacing: 0.5px;
         }
 
-        /* Content area styling */
+        /* Content area styling - Modern */
         .content-area {
             flex: 1;
-            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
             position: relative;
             overflow: hidden;
             animation: fadeIn 1s ease-out 0.5s both;
-            border-radius: 0 8px 0 0;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.02);
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.015);
         }
 
         .content-area.fullscreen {
@@ -522,8 +1196,8 @@
         }
 
         .content-area.fullscreen .content-controls {
-            top: 20px;
-            right: 20px;
+            top: 24px;
+            right: 24px;
         }
 
         #content-frame {
@@ -532,16 +1206,16 @@
             border: none;
             display: block;
             border-radius: 0;
-            transition: all 0.5s ease;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #ffffff;
         }
 
         #content-frame.loading {
-            opacity: 0.7;
-            transform: scale(0.98);
+            opacity: 0.6;
+            filter: blur(2px);
         }
 
-        /* Enhanced loading indicator */
+        /* Enhanced loading indicator - Modern */
         .loading-indicator {
             position: absolute;
             top: 50%;
@@ -551,30 +1225,35 @@
             flex-direction: column;
             align-items: center;
             z-index: 10;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
         .loading-indicator.active {
             display: flex;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(0, 102, 204, 0.2);
-            border-left: 4px solid var(--akamai-blue);
+            width: 56px;
+            height: 56px;
+            border: 4px solid rgba(0, 102, 204, 0.15);
+            border-top: 4px solid var(--akamai-blue);
+            border-right: 4px solid var(--akamai-orange);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
+            animation: spin 0.8s linear infinite;
         }
 
         .loading-text {
-            margin-top: 15px;
-            color: var(--akamai-blue);
+            margin-top: 20px;
+            color: var(--akamai-dark-blue);
             font-weight: 600;
             font-size: 14px;
+            letter-spacing: 0.3px;
         }
 
         @keyframes spin {
@@ -940,77 +1619,195 @@
             }
         }
 
-        /* Content Controls */
+        /* Breadcrumb Navigation */
+        .breadcrumb {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            padding: 10px 16px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            font-size: 13px;
+            z-index: 20;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="dark"] .breadcrumb {
+            background: rgba(30, 41, 59, 0.98);
+            border-color: rgba(51, 65, 85, 0.8);
+        }
+
+        .breadcrumb-item {
+            color: #64748b;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--akamai-blue);
+            font-weight: 600;
+        }
+
+        .breadcrumb-separator {
+            color: #cbd5e1;
+            font-size: 10px;
+        }
+
+        /* Time Tracker */
+        .time-tracker {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            padding: 10px 16px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--akamai-blue);
+            z-index: 20;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="dark"] .time-tracker {
+            background: rgba(30, 41, 59, 0.98);
+            border-color: rgba(51, 65, 85, 0.8);
+        }
+
+        .time-tracker i {
+            color: var(--akamai-orange);
+        }
+
+        /* Content Controls - Modern Design */
         .content-controls {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 20px;
+            right: 20px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             z-index: 20;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 8px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            padding: 6px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        [data-theme="dark"] .content-controls {
+            background: rgba(30, 41, 59, 0.98);
+            border-color: rgba(51, 65, 85, 0.8);
         }
 
         .content-controls:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
         }
 
         .control-btn {
-            background: var(--akamai-blue);
+            background: linear-gradient(135deg, var(--akamai-blue), #0052a3);
             color: white;
             border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 6px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
-            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.2));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .control-btn:hover::before {
+            opacity: 1;
         }
 
         .control-btn:hover {
-            background: var(--akamai-orange);
-            transform: scale(1.1);
+            background: linear-gradient(135deg, var(--akamai-orange), #e55a00);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 102, 0, 0.4);
         }
 
         .control-btn:active {
-            transform: scale(0.95);
+            transform: translateY(0) scale(0.95);
         }
 
         .control-btn:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
             transform: none;
+            background: #94a3b8;
         }
 
-        /* Search Container */
+        .control-btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .control-btn.bookmarked {
+            background: linear-gradient(135deg, var(--akamai-orange), #e55a00);
+        }
+
+        .control-btn.bookmarked i {
+            font-weight: 900;
+        }
+
+        .control-btn.completed {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+        }
+
+        /* Search Container in Navigation */
         .search-container {
             position: relative;
-            margin: 15px 20px;
-            max-width: 300px;
+            margin: 15px 15px 10px 15px;
+            padding: 0;
         }
 
         .search-input {
             width: 100%;
-            padding: 10px 40px 10px 15px;
+            padding: 12px 40px 12px 15px;
             border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
+            border-radius: 10px;
+            font-size: 13px;
             transition: all 0.3s ease;
             background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
         .search-input:focus {
             outline: none;
             border-color: var(--akamai-blue);
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1), 0 4px 8px rgba(0, 0, 0, 0.08);
+            background: #ffffff;
+        }
+
+        .search-input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
         }
 
         .search-icon {
@@ -1020,6 +1817,7 @@
             transform: translateY(-50%);
             color: var(--akamai-blue);
             pointer-events: none;
+            font-size: 14px;
         }
 
         .navigation-panel.collapsed .search-container {
@@ -1072,20 +1870,22 @@
             }
         }
 
-        /* Loading progress bar */
+        /* Loading progress bar - Modern */
         .loading-progress {
             position: absolute;
             top: 0;
             left: 0;
             width: 0%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--akamai-blue), var(--akamai-orange));
+            height: 4px;
+            background: linear-gradient(90deg, var(--akamai-blue), var(--akamai-orange), var(--akamai-blue));
+            background-size: 200% 100%;
             z-index: 100;
             transition: width 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.4);
         }
 
         .loading-progress.active {
-            animation: loadingProgress 2s ease-in-out infinite;
+            animation: loadingProgress 2s ease-in-out infinite, shimmer 1.5s ease-in-out infinite;
         }
 
         @keyframes loadingProgress {
@@ -1100,6 +1900,15 @@
             100% {
                 width: 100%;
                 left: 100%;
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 200% 50%;
             }
         }
 
@@ -1124,20 +1933,20 @@
             }
         }
 
-        /* Folder styling for navigation */
+        /* Folder styling for navigation - Modern */
         .folder-header {
-            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
-            color: white;
-            border-bottom: 2px solid var(--akamai-orange);
-            padding: 12px 20px;
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.05), rgba(0, 102, 204, 0.08));
+            color: var(--akamai-dark-blue);
+            border-left: 3px solid var(--akamai-orange);
+            padding: 10px 20px;
             font-weight: 700;
-            font-size: 11px;
+            font-size: 10.5px;
             text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin: 8px 0 0 0;
+            letter-spacing: 1.5px;
+            margin: 12px 8px 4px 8px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 102, 204, 0.2);
+            border-radius: 0 8px 8px 0;
             transition: all 0.3s ease;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -1150,12 +1959,16 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0, 102, 204, 0.1), transparent);
             transition: left 0.8s ease;
         }
 
         .folder-header:hover::before {
             left: 100%;
+        }
+
+        .folder-header:first-child {
+            margin-top: 4px;
         }
 
         /* Responsive design */
@@ -1364,6 +2177,14 @@
                 right: 20px;
                 top: auto;
                 flex-direction: column;
+                padding: 5px;
+                gap: 6px;
+            }
+
+            .control-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 16px;
             }
 
             .toast {
@@ -1371,6 +2192,26 @@
                 right: 10px;
                 left: 10px;
                 max-width: none;
+            }
+
+            .folder-header {
+                font-size: 10px;
+                padding: 8px 16px;
+                margin: 10px 6px 3px 6px;
+            }
+
+            .course-link {
+                padding: 12px 16px;
+                margin: 2px 6px;
+            }
+
+            .course-icon {
+                font-size: 16px;
+                margin-right: 12px;
+            }
+
+            .course-title {
+                font-size: 13px;
             }
         }
     </style>
@@ -1381,14 +2222,233 @@
         <button class="menu-toggle" id="menu-toggle">
             <i class="fas fa-bars"></i>
         </button>
-        <div class="header-logo">
+            <div class="header-logo">
             <img src="Akamai_logo.svg.png" alt="Akamai Logo" class="akamai-logo">
             <div class="header-text">
                 <h1>Akamai Zuplo</h1>
                 <span class="header-subtitle">Learning Platform</span>
             </div>
         </div>
+        
+        <!-- Header Controls -->
+        <div class="header-controls">
+            <!-- Progress Stats -->
+            <div class="progress-stats" id="progress-stats">
+                <i class="fas fa-graduation-cap"></i>
+                <span id="completion-count">0/0</span>
+            </div>
+            
+            <!-- Theme Toggle -->
+            <button class="header-btn" id="theme-toggle" title="Toggle Dark Mode (Alt+T)">
+                <i class="fas fa-moon"></i>
+            </button>
+            
+            <!-- Recently Viewed -->
+            <div class="recent-dropdown">
+                <button class="header-btn" id="recent-btn" title="Recently Viewed">
+                    <i class="fas fa-history"></i>
+                </button>
+                <div class="recent-menu" id="recent-menu">
+                    <div class="recent-header">Recently Viewed</div>
+                    <div class="recent-list" id="recent-list">
+                        <p class="recent-empty">No recent courses</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Achievements -->
+            <button class="header-btn" id="achievements-btn" title="Achievements">
+                <i class="fas fa-trophy"></i>
+                <span class="badge-count" id="achievement-count" style="display: none;">0</span>
+            </button>
+
+            <!-- Settings -->
+            <button class="header-btn" id="settings-btn" title="Settings">
+                <i class="fas fa-cog"></i>
+            </button>
+        </div>
     </header>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="modal-content settings-modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> Settings</h2>
+                <button class="modal-close" id="close-settings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Appearance Section -->
+                <div class="settings-section">
+                    <h3><i class="fas fa-palette"></i> Appearance</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span>Theme</span>
+                            <small>Choose your preferred theme</small>
+                        </div>
+                        <div class="theme-selector">
+                            <button class="theme-option" data-theme="light">
+                                <i class="fas fa-sun"></i>
+                                <span>Light</span>
+                            </button>
+                            <button class="theme-option" data-theme="dark">
+                                <i class="fas fa-moon"></i>
+                                <span>Dark</span>
+                            </button>
+                            <button class="theme-option" data-theme="auto">
+                                <i class="fas fa-magic"></i>
+                                <span>Auto</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span>Animations</span>
+                            <small>Enable smooth animations</small>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="animations-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span>Auto-Hide Controls</span>
+                            <small>Hide controls when not in use</small>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autohide-toggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Learning Section -->
+                <div class="settings-section">
+                    <h3><i class="fas fa-graduation-cap"></i> Learning</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span>Auto-Complete</span>
+                            <small>Automatically mark courses as complete after viewing</small>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autocomplete-toggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span>Show Time Tracker</span>
+                            <small>Display time spent on courses</small>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="timetracker-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span>Show Breadcrumbs</span>
+                            <small>Display navigation breadcrumbs</small>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="breadcrumbs-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Data Management -->
+                <div class="settings-section">
+                    <h3><i class="fas fa-database"></i> Data Management</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span>Export Progress</span>
+                            <small>Download your learning progress as JSON</small>
+                        </div>
+                        <button class="btn-secondary" id="export-data-btn">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span>Import Progress</span>
+                            <small>Restore progress from a backup file</small>
+                        </div>
+                        <button class="btn-secondary" id="import-data-btn">
+                            <i class="fas fa-upload"></i> Import
+                        </button>
+                        <input type="file" id="import-file-input" accept=".json" style="display: none;">
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span>Reset Progress</span>
+                            <small>Clear all progress and start fresh</small>
+                        </div>
+                        <button class="btn-danger" id="reset-data-btn">
+                            <i class="fas fa-trash-alt"></i> Reset All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="settings-section">
+                    <h3><i class="fas fa-chart-bar"></i> Your Statistics</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-completed">0</div>
+                            <div class="stat-label">Courses Completed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-time">0h</div>
+                            <div class="stat-label">Time Invested</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-bookmarks">0</div>
+                            <div class="stat-label">Bookmarks</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="stat-streak">0</div>
+                            <div class="stat-label">Day Streak</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <p class="version-info">Akamai Learning Platform v2.0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievements Modal -->
+    <div class="modal-overlay" id="achievements-modal">
+        <div class="modal-content achievements-modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-trophy"></i> Achievements</h2>
+                <button class="modal-close" id="close-achievements">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="achievements-grid" id="achievements-grid">
+                    <!-- Achievements will be dynamically generated -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <main class="app-main">
         <nav class="navigation-panel" id="navigation-panel">
@@ -1401,6 +2461,12 @@
             <button class="expand-button" id="expand-button" title="Expand Navigation">
                 <i class="fas fa-chevron-right"></i>
             </button>
+            <!-- Search Bar in Navigation -->
+            <div class="search-container" id="search-container">
+                <input type="text" class="search-input" id="course-search" placeholder="Search courses..." autocomplete="off">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            
             <ul class="course-list" id="course-list">
                 <!-- Course modules will be dynamically generated -->
             </ul>
@@ -1458,8 +2524,23 @@
                 <p>Your browser does not support iframes. Please update your browser to view the content.</p>
             </iframe>
             
+            <!-- Breadcrumb Navigation -->
+            <div class="breadcrumb" id="breadcrumb" style="display: none;">
+                <span class="breadcrumb-item">Home</span>
+                <i class="fas fa-chevron-right breadcrumb-separator"></i>
+                <span class="breadcrumb-item" id="breadcrumb-folder">Category</span>
+                <i class="fas fa-chevron-right breadcrumb-separator"></i>
+                <span class="breadcrumb-item active" id="breadcrumb-course">Course</span>
+            </div>
+
             <!-- Content Controls -->
             <div class="content-controls" id="content-controls" style="display: none;">
+                <button class="control-btn" id="mark-complete-btn" title="Mark as Complete">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button class="control-btn" id="bookmark-btn" title="Bookmark (B)">
+                    <i class="far fa-bookmark"></i>
+                </button>
                 <button class="control-btn" id="refresh-btn" title="Refresh Content (Ctrl+R)">
                     <i class="fas fa-sync-alt"></i>
                 </button>
@@ -1473,17 +2554,35 @@
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
-            
-            <!-- Search Bar -->
-            <div class="search-container" id="search-container">
-                <input type="text" class="search-input" id="course-search" placeholder="Search courses...">
-                <i class="fas fa-search search-icon"></i>
+
+            <!-- Time Tracker -->
+            <div class="time-tracker" id="time-tracker" style="display: none;">
+                <i class="fas fa-clock"></i>
+                <span id="time-display">00:00</span>
             </div>
         </section>
     </main>
 
     <script>
-        // Course data structure and configuration
+        /*
+        ╔═══════════════════════════════════════════════════════════════════════════════════╗
+        ║                                                                                   ║
+        ║   🎓 AKAMAI API GATEWAY LEARNING PLATFORM                                        ║
+        ║                                                                                   ║
+        ║   📚 TO ADD NEW COURSES/MODULES:                                                 ║
+        ║   Scroll down to the "COURSE CONFIGURATION" section (around line 1650)           ║
+        ║   Copy the template and fill in your course details                              ║
+        ║                                                                                   ║
+        ║   ⚙️ TO CUSTOMIZE SETTINGS:                                                       ║
+        ║   Edit the AppConfig object below                                                ║
+        ║                                                                                   ║
+        ╚═══════════════════════════════════════════════════════════════════════════════════╝
+        */
+
+        // ═══════════════════════════════════════════════════════════════════════════════
+        // APPLICATION CONFIGURATION
+        // ═══════════════════════════════════════════════════════════════════════════════
+        
         const AppConfig = {
             branding: {
                 title: "Akamai API Gateway Learning Platform"
@@ -1492,21 +2591,35 @@
                 navigationWidth: "280px",
                 headerHeight: "70px"
             },
-            defaultCourse: "api-management", // Start with first beginner process
-            showLandingPage: true
+            defaultCourse: "api-management",  // Which course to load first (use course ID)
+            showLandingPage: true             // Show landing page on startup (true/false)
         };
 
-        // Course data with organized structure and new URLs
+        /*═══════════════════════════════════════════════════════════════════════════════════
+        
+            🎯 COURSE CONFIGURATION - ADD YOUR MODULES HERE
+            
+            This is where you add new courses/modules to the learning platform.
+            Simply copy the template below and customize it with your course details.
+            
+        ═══════════════════════════════════════════════════════════════════════════════════*/
+
         const courses = [
-            // Beginner Processes folder
+            
+            // ┌─────────────────────────────────────────────────────────────────────────────┐
+            // │  BEGINNER PROCESSES                                                         │
+            // │  Add beginner-level courses here                                            │
+            // └─────────────────────────────────────────────────────────────────────────────┘
+            
             {
-                id: 'api-management',
-                title: 'API Management',
-                icon: 'fas fa-cogs',
+                id: 'api-management',              // Unique ID (use lowercase with hyphens)
+                title: 'API Management',            // Display name in navigation
+                icon: 'fas fa-cogs',               // FontAwesome icon class
                 url: 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/71181e57-957b-4ecc-adc6-73e826f61cd2/zOJG49Qsbv1ZGA2iTYmftX03pHWh4ONHkTsxV6xcsO9',
                 description: 'Learn API management fundamentals and best practices',
-                folder: 'Beginner Processes'
+                folder: 'Beginner Processes'       // Folder/category name
             },
+            
             {
                 id: 'dev-portal-overview',
                 title: 'Dev Portal Overview',
@@ -1515,6 +2628,7 @@
                 description: 'Explore developer portal features and capabilities',
                 folder: 'Beginner Processes'
             },
+            
             {
                 id: 'zuplo-overview',
                 title: 'Zuplo Overview',
@@ -1523,42 +2637,95 @@
                 description: 'Get started with Zuplo platform overview',
                 folder: 'Beginner Processes'
             },
-            // Advanced Processes (coming soon)
+            
+            // ┌─────────────────────────────────────────────────────────────────────────────┐
+            // │  ADVANCED PROCESSES                                                         │
+            // │  Add advanced-level courses here                                            │
+            // └─────────────────────────────────────────────────────────────────────────────┘
+            
             {
                 id: 'authentication',
                 title: 'Authentication & Security',
                 icon: 'fas fa-shield-alt',
-                description: 'Learn about API authentication methods - Coming Soon',
+                url: '', // Leave empty for coming soon
+                description: 'Learn about API authentication methods',
                 folder: 'Advanced Processes',
-                comingSoon: true
+                comingSoon: true  // Set to false when ready to launch
             },
+            
             {
                 id: 'rate-limiting',
                 title: 'Rate Limiting',
                 icon: 'fas fa-tachometer-alt',
-                description: 'Managing API traffic and rate limits - Coming Soon',
+                url: '',
+                description: 'Managing API traffic and rate limits',
                 folder: 'Advanced Processes',
                 comingSoon: true
             },
+            
             {
                 id: 'monitoring',
                 title: 'Monitoring & Analytics',
                 icon: 'fas fa-chart-line',
-                description: 'Track API performance and usage - Coming Soon',
+                url: '',
+                description: 'Track API performance and usage',
                 folder: 'Advanced Processes',
                 comingSoon: true
-            }
+            },
+            
+            // ┌─────────────────────────────────────────────────────────────────────────────┐
+            // │  ✨ ADD NEW COURSES HERE                                                    │
+            // │                                                                             │
+            // │  Template - Copy and customize this:                                        │
+            // │  {                                                                          │
+            // │      id: 'your-course-id',              // Unique identifier                │
+            // │      title: 'Your Course Name',         // What users see                  │
+            // │      icon: 'fas fa-icon-name',          // FontAwesome icon                │
+            // │      url: 'https://your-course-url',    // Course content URL              │
+            // │      description: 'Course description', // Tooltip text                    │
+            // │      folder: 'Your Folder Name',        // Category/section                │
+            // │      comingSoon: false                  // Optional: true for coming soon  │
+            // │  },                                                                         │
+            // │                                                                             │
+            // │  📌 Popular Icons:                                                          │
+            // │  • fas fa-book          - Book/Documentation                               │
+            // │  • fas fa-graduation-cap - Learning/Tutorial                               │
+            // │  • fas fa-video         - Video content                                    │
+            // │  • fas fa-code          - Coding/Development                               │
+            // │  • fas fa-cogs          - Settings/Configuration                           │
+            // │  • fas fa-rocket        - Getting Started                                  │
+            // │  • fas fa-shield-alt    - Security                                         │
+            // │  • fas fa-database      - Data/Storage                                     │
+            // │  • fas fa-cloud         - Cloud/API                                        │
+            // │  • fas fa-chart-line    - Analytics                                        │
+            // │  • fas fa-lock          - Authentication                                   │
+            // │  • fas fa-server        - Backend                                          │
+            // │                                                                             │
+            // │  Find more icons at: https://fontawesome.com/icons                         │
+            // └─────────────────────────────────────────────────────────────────────────────┘
+            
+            // EXAMPLE: Uncomment and customize to add a new course
+            // {
+            //     id: 'my-new-course',
+            //     title: 'My New Course',
+            //     icon: 'fas fa-book',
+            //     url: 'https://example.com/my-course',
+            //     description: 'This is my new course description',
+            //     folder: 'My Folder Name'
+            // },
+            
         ];
-
-        // Course URL mapping for easy access
-        const courseUrls = {
-            'api-management': 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/71181e57-957b-4ecc-adc6-73e826f61cd2/zOJG49Qsbv1ZGA2iTYmftX03pHWh4ONHkTsxV6xcsO9',
-            'dev-portal-overview': 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/71181e57-957b-4ecc-adc6-73e826f61cd2/aq4U2XF32o0bnpCzWli8dXPxMqyiYEIdMoNSW97Kvza?_wfx_=22e4b3ad-21ee-49dd-99cd-0de3e29a0dea&_wfx_stage=production&_wfx_state=null',
-            'zuplo-overview': 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/71181e57-957b-4ecc-adc6-73e826f61cd2/OW0IpbRt9v1jin5fQGPBOAezyEATSai51KL5g68qGTZ?_wfx_=4b0ea1eb-8da0-4457-9ab6-7cae72e4b6de&_wfx_stage=production&_wfx_state=null',
-            'authentication': 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/authentication-module/secure-api-endpoints',
-            'rate-limiting': 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/rate-limiting-module/traffic-control',
-            'monitoring': 'https://whatfix.com/service/mirror/serve/2f114f3b-69de-4271-ade1-b316a9314f5f/monitoring-module/api-analytics'
-        };
+        
+        /*═══════════════════════════════════════════════════════════════════════════════════
+            END OF COURSE CONFIGURATION
+            
+            💡 Tips:
+            • Courses are displayed in the order they appear in this array
+            • Folder headers are created automatically based on the 'folder' property
+            • Make sure each course has a unique 'id'
+            • The 'description' appears as a tooltip when hovering over the course
+            • Set 'comingSoon: true' to show a "Coming Soon" page instead of the URL
+        ═══════════════════════════════════════════════════════════════════════════════════*/
 
         // Link interceptor for handling new tab links within iframes
         const LinkInterceptor = {
@@ -1862,6 +3029,469 @@
             }
         };
 
+        // LocalStorage Manager
+        const Storage = {
+            get(key, defaultValue = null) {
+                try {
+                    const item = localStorage.getItem(`akamai-lms-${key}`);
+                    return item ? JSON.parse(item) : defaultValue;
+                } catch {
+                    return defaultValue;
+                }
+            },
+            set(key, value) {
+                try {
+                    localStorage.setItem(`akamai-lms-${key}`, JSON.stringify(value));
+                } catch (e) {
+                    console.error('Storage error:', e);
+                }
+            },
+            remove(key) {
+                localStorage.removeItem(`akamai-lms-${key}`);
+            }
+        };
+
+        // Progress Tracking System
+        const ProgressTracker = {
+            completed: Storage.get('completed-courses', []),
+            bookmarked: Storage.get('bookmarked-courses', []),
+            timeSpent: Storage.get('time-spent', {}),
+            recentlyViewed: Storage.get('recently-viewed', []),
+
+            markComplete(courseId) {
+                if (!this.completed.includes(courseId)) {
+                    this.completed.push(courseId);
+                    Storage.set('completed-courses', this.completed);
+                    this.updateUI();
+                    Toast.show('Course marked as complete! 🎉', 'success');
+                    return true;
+                }
+                return false;
+            },
+
+            markIncomplete(courseId) {
+                this.completed = this.completed.filter(id => id !== courseId);
+                Storage.set('completed-courses', this.completed);
+                this.updateUI();
+            },
+
+            toggleBookmark(courseId) {
+                const index = this.bookmarked.indexOf(courseId);
+                if (index > -1) {
+                    this.bookmarked.splice(index, 1);
+                    Toast.show('Bookmark removed', 'info', 2000);
+                } else {
+                    this.bookmarked.push(courseId);
+                    Toast.show('Course bookmarked! 🔖', 'success', 2000);
+                }
+                Storage.set('bookmarked-courses', this.bookmarked);
+                this.updateUI();
+            },
+
+            isBookmarked(courseId) {
+                return this.bookmarked.includes(courseId);
+            },
+
+            isCompleted(courseId) {
+                return this.completed.includes(courseId);
+            },
+
+            addRecentlyViewed(courseId, courseTitle, courseIcon) {
+                // Remove if already exists
+                this.recentlyViewed = this.recentlyViewed.filter(item => item.id !== courseId);
+                
+                // Add to front
+                this.recentlyViewed.unshift({
+                    id: courseId,
+                    title: courseTitle,
+                    icon: courseIcon,
+                    timestamp: Date.now()
+                });
+
+                // Keep only last 10
+                this.recentlyViewed = this.recentlyViewed.slice(0, 10);
+                
+                Storage.set('recently-viewed', this.recentlyViewed);
+                this.updateRecentMenu();
+            },
+
+            updateRecentMenu() {
+                const recentList = document.getElementById('recent-list');
+                if (!recentList) return;
+
+                if (this.recentlyViewed.length === 0) {
+                    recentList.innerHTML = '<p class="recent-empty">No recent courses</p>';
+                    return;
+                }
+
+                recentList.innerHTML = this.recentlyViewed.map(item => {
+                    const timeAgo = this.getTimeAgo(item.timestamp);
+                    return `
+                        <div class="recent-item" data-course-id="${item.id}">
+                            <i class="${item.icon}"></i>
+                            <span class="recent-item-text">${item.title}</span>
+                            <span class="recent-item-time">${timeAgo}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                // Add click handlers
+                recentList.querySelectorAll('.recent-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const courseId = item.dataset.courseId;
+                        CourseManager.loadCourse(courseId);
+                        document.getElementById('recent-menu').classList.remove('show');
+                    });
+                });
+            },
+
+            getTimeAgo(timestamp) {
+                const seconds = Math.floor((Date.now() - timestamp) / 1000);
+                if (seconds < 60) return 'Just now';
+                const minutes = Math.floor(seconds / 60);
+                if (minutes < 60) return `${minutes}m ago`;
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `${hours}h ago`;
+                const days = Math.floor(hours / 24);
+                return `${days}d ago`;
+            },
+
+            updateUI() {
+                // Update completion count
+                const totalCourses = courses.filter(c => !c.comingSoon).length;
+                const completedCount = this.completed.length;
+                const countDisplay = document.getElementById('completion-count');
+                if (countDisplay) {
+                    countDisplay.textContent = `${completedCount}/${totalCourses}`;
+                }
+
+                // Update course links
+                courses.forEach(course => {
+                    const link = document.querySelector(`[data-course-id="${course.id}"]`);
+                    if (link) {
+                        if (this.isCompleted(course.id)) {
+                            link.classList.add('completed');
+                        } else {
+                            link.classList.remove('completed');
+                        }
+                    }
+                });
+            }
+        };
+
+        // Theme Manager
+        const ThemeManager = {
+            current: Storage.get('theme', 'light'),
+
+            init() {
+                this.apply();
+                const themeBtn = document.getElementById('theme-toggle');
+                if (themeBtn) {
+                    themeBtn.addEventListener('click', () => this.toggle());
+                }
+            },
+
+            toggle() {
+                this.current = this.current === 'light' ? 'dark' : 'light';
+                this.apply();
+                Storage.set('theme', this.current);
+            },
+
+            apply() {
+                document.documentElement.setAttribute('data-theme', this.current);
+                const icon = document.querySelector('#theme-toggle i');
+                if (icon) {
+                    icon.className = this.current === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+                }
+            }
+        };
+
+        // Time Tracker
+        const TimeTracker = {
+            startTime: null,
+            currentCourse: null,
+            intervalId: null,
+
+            start(courseId) {
+                this.stop(); // Stop any existing tracker
+                this.currentCourse = courseId;
+                this.startTime = Date.now();
+                this.updateDisplay();
+                
+                this.intervalId = setInterval(() => {
+                    this.updateDisplay();
+                }, 1000);
+
+                const tracker = document.getElementById('time-tracker');
+                if (tracker) tracker.style.display = 'flex';
+            },
+
+            stop() {
+                if (this.intervalId) {
+                    clearInterval(this.intervalId);
+                    this.intervalId = null;
+                }
+
+                if (this.currentCourse && this.startTime) {
+                    const elapsed = Date.now() - this.startTime;
+                    const timeSpent = ProgressTracker.timeSpent[this.currentCourse] || 0;
+                    ProgressTracker.timeSpent[this.currentCourse] = timeSpent + elapsed;
+                    Storage.set('time-spent', ProgressTracker.timeSpent);
+                }
+
+                const tracker = document.getElementById('time-tracker');
+                if (tracker) tracker.style.display = 'none';
+            },
+
+            updateDisplay() {
+                if (!this.startTime) return;
+                
+                const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                
+                const display = document.getElementById('time-display');
+                if (display) {
+                    display.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                }
+            }
+        };
+
+        // Achievements System
+        const Achievements = {
+            definitions: [
+                { id: 'first-course', icon: '🎓', title: 'First Steps', description: 'Complete your first course', condition: () => ProgressTracker.completed.length >= 1 },
+                { id: 'three-courses', icon: '🌟', title: 'Learning Streak', description: 'Complete 3 courses', condition: () => ProgressTracker.completed.length >= 3 },
+                { id: 'all-beginner', icon: '🚀', title: 'Beginner Graduate', description: 'Complete all beginner courses', condition: () => {
+                    const beginnerCourses = courses.filter(c => c.folder === 'Beginner Processes' && !c.comingSoon);
+                    return beginnerCourses.every(c => ProgressTracker.isCompleted(c.id));
+                }},
+                { id: 'bookmark-master', icon: '🔖', title: 'Bookmark Master', description: 'Bookmark 5 courses', condition: () => ProgressTracker.bookmarked.length >= 5 },
+                { id: 'speed-learner', icon: '⚡', title: 'Speed Learner', description: 'Complete a course in under 10 minutes', condition: () => {
+                    return Object.values(ProgressTracker.timeSpent).some(time => time < 600000 && time > 60000);
+                }},
+                { id: 'dedicated', icon: '💪', title: 'Dedicated Learner', description: 'Spend over 1 hour learning', condition: () => {
+                    const totalTime = Object.values(ProgressTracker.timeSpent).reduce((a, b) => a + b, 0);
+                    return totalTime > 3600000;
+                }},
+                { id: 'explorer', icon: '🗺️', title: 'Explorer', description: 'View all available courses', condition: () => ProgressTracker.recentlyViewed.length >= courses.filter(c => !c.comingSoon).length },
+                { id: 'perfectionist', icon: '✨', title: 'Perfectionist', description: 'Complete all courses', condition: () => {
+                    const allCourses = courses.filter(c => !c.comingSoon);
+                    return allCourses.length > 0 && allCourses.every(c => ProgressTracker.isCompleted(c.id));
+                }}
+            ],
+            unlocked: Storage.get('achievements', []),
+
+            check() {
+                let newUnlocks = [];
+                this.definitions.forEach(achievement => {
+                    if (!this.unlocked.includes(achievement.id) && achievement.condition()) {
+                        this.unlocked.push(achievement.id);
+                        newUnlocks.push(achievement);
+                    }
+                });
+
+                if (newUnlocks.length > 0) {
+                    Storage.set('achievements', this.unlocked);
+                    this.updateBadge();
+                    newUnlocks.forEach(ach => {
+                        setTimeout(() => {
+                            Toast.show(`🏆 Achievement Unlocked: ${ach.title}!`, 'success', 4000);
+                        }, 500);
+                    });
+                }
+            },
+
+            updateBadge() {
+                const badge = document.getElementById('achievement-count');
+                if (badge) {
+                    const count = this.unlocked.length;
+                    badge.textContent = count;
+                    badge.style.display = count > 0 ? 'block' : 'none';
+                }
+            },
+
+            render() {
+                const grid = document.getElementById('achievements-grid');
+                if (!grid) return;
+
+                grid.innerHTML = this.definitions.map(ach => {
+                    const isUnlocked = this.unlocked.includes(ach.id);
+                    return `
+                        <div class="achievement-card ${isUnlocked ? 'unlocked' : 'locked'}">
+                            <div class="achievement-icon">${ach.icon}</div>
+                            <div class="achievement-title">${ach.title}</div>
+                            <div class="achievement-description">${ach.description}</div>
+                            ${isUnlocked ? '<div class="achievement-date">Unlocked!</div>' : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+        };
+
+        // Settings Manager
+        const SettingsManager = {
+            settings: Storage.get('app-settings', {
+                animations: true,
+                autoHide: false,
+                autoComplete: false,
+                showTimeTracker: true,
+                showBreadcrumbs: true
+            }),
+
+            init() {
+                this.loadSettings();
+                this.setupEventListeners();
+            },
+
+            loadSettings() {
+                document.getElementById('animations-toggle').checked = this.settings.animations;
+                document.getElementById('autohide-toggle').checked = this.settings.autoHide;
+                document.getElementById('autocomplete-toggle').checked = this.settings.autoComplete;
+                document.getElementById('timetracker-toggle').checked = this.settings.showTimeTracker;
+                document.getElementById('breadcrumbs-toggle').checked = this.settings.showBreadcrumbs;
+
+                // Apply settings
+                if (!this.settings.animations) {
+                    document.body.style.setProperty('--transition-speed', '0s');
+                }
+            },
+
+            setupEventListeners() {
+                const toggles = ['animations', 'autohide', 'autocomplete', 'timetracker', 'breadcrumbs'];
+                toggles.forEach(setting => {
+                    const toggle = document.getElementById(`${setting}-toggle`);
+                    if (toggle) {
+                        toggle.addEventListener('change', (e) => {
+                            this.settings[setting.replace('-', '')] = e.target.checked;
+                            this.save();
+                            this.applySettings();
+                        });
+                    }
+                });
+
+                // Export data
+                document.getElementById('export-data-btn')?.addEventListener('click', () => this.exportData());
+                
+                // Import data
+                document.getElementById('import-data-btn')?.addEventListener('click', () => {
+                    document.getElementById('import-file-input').click();
+                });
+
+                document.getElementById('import-file-input')?.addEventListener('change', (e) => {
+                    this.importData(e.target.files[0]);
+                });
+
+                // Reset data
+                document.getElementById('reset-data-btn')?.addEventListener('click', () => this.resetData());
+            },
+
+            save() {
+                Storage.set('app-settings', this.settings);
+            },
+
+            applySettings() {
+                // Apply animations setting
+                if (this.settings.animations) {
+                    document.body.style.removeProperty('--transition-speed');
+                } else {
+                    document.body.style.setProperty('--transition-speed', '0s');
+                }
+
+                // Apply time tracker visibility
+                const timeTracker = document.getElementById('time-tracker');
+                if (timeTracker && !this.settings.showTimeTracker) {
+                    timeTracker.style.display = 'none';
+                }
+
+                // Apply breadcrumbs visibility
+                const breadcrumb = document.getElementById('breadcrumb');
+                if (breadcrumb && !this.settings.showBreadcrumbs) {
+                    breadcrumb.style.display = 'none';
+                }
+            },
+
+            exportData() {
+                const data = {
+                    version: '2.0',
+                    exported: new Date().toISOString(),
+                    completed: ProgressTracker.completed,
+                    bookmarked: ProgressTracker.bookmarked,
+                    timeSpent: ProgressTracker.timeSpent,
+                    achievements: Achievements.unlocked,
+                    settings: this.settings
+                };
+
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `akamai-lms-backup-${Date.now()}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                Toast.show('Progress exported successfully! 📥', 'success');
+            },
+
+            importData(file) {
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        if (confirm('This will overwrite your current progress. Continue?')) {
+                            ProgressTracker.completed = data.completed || [];
+                            ProgressTracker.bookmarked = data.bookmarked || [];
+                            ProgressTracker.timeSpent = data.timeSpent || {};
+                            Achievements.unlocked = data.achievements || [];
+                            
+                            Storage.set('completed-courses', ProgressTracker.completed);
+                            Storage.set('bookmarked-courses', ProgressTracker.bookmarked);
+                            Storage.set('time-spent', ProgressTracker.timeSpent);
+                            Storage.set('achievements', Achievements.unlocked);
+
+                            ProgressTracker.updateUI();
+                            Achievements.updateBadge();
+
+                            Toast.show('Progress imported successfully! 📤', 'success');
+                            setTimeout(() => location.reload(), 1500);
+                        }
+                    } catch (error) {
+                        Toast.show('Invalid backup file! ❌', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            },
+
+            resetData() {
+                if (confirm('Are you sure you want to reset ALL progress? This cannot be undone!')) {
+                    if (confirm('Really? This will delete everything!')) {
+                        localStorage.clear();
+                        Toast.show('All progress reset! Reloading...', 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    }
+                }
+            },
+
+            updateStats() {
+                const totalTime = Object.values(ProgressTracker.timeSpent).reduce((a, b) => a + b, 0);
+                const hours = Math.floor(totalTime / 3600000);
+                const minutes = Math.floor((totalTime % 3600000) / 60000);
+
+                document.getElementById('stat-completed').textContent = ProgressTracker.completed.length;
+                document.getElementById('stat-time').textContent = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+                document.getElementById('stat-bookmarks').textContent = ProgressTracker.bookmarked.length;
+                document.getElementById('stat-streak').textContent = this.calculateStreak();
+            },
+
+            calculateStreak() {
+                // Simple streak calculation (can be enhanced)
+                return ProgressTracker.completed.length > 0 ? Math.min(ProgressTracker.completed.length, 30) : 0;
+            }
+        };
+
         // Toast Notification System
         const Toast = {
             show(message, type = 'info', duration = 3000) {
@@ -2016,7 +3646,6 @@
                 const course = courses.find(c => c.id === courseId);
                 if (!course) {
                     console.error(`Course with ID "${courseId}" not found`);
-                    Toast.show('Course not found', 'error');
                     return false;
                 }
 
@@ -2029,13 +3658,18 @@
 
                 // Don't clear if loading the same course
                 if (this.currentCourse === courseId) {
-                    Toast.show('Course already loaded', 'info', 2000);
                     return true;
                 }
 
                 try {
                     // Store previous course
                     this.previousCourse = this.currentCourse;
+
+                    // Clear storage and cache silently before loading new course
+                    if (this.previousCourse && this.previousCourse !== courseId) {
+                        await StorageCleaner.clearIframeStorage(this.iframe, true);
+                        StorageCleaner.clearAppStorage();
+                    }
 
                     // Hide landing page and show iframe
                     this.hideLandingPage();
@@ -2072,15 +3706,18 @@
                             
                             // Update navigation controls
                             this.updateNavigationControls();
-                            
-                            Toast.show(`Loaded: ${course.title}`, 'success', 2000);
+
+                            // Add to recently viewed
+                            ProgressTracker.addRecentlyViewed(course.id, course.title, course.icon);
+
+                            // Check for achievements
+                            Achievements.check();
                         };
                         
                         // Handle load timeout
                         const loadTimeout = setTimeout(() => {
                             this.hideLoading();
                             this.hideLoadingProgress();
-                            Toast.show('Content is loading...', 'info', 2000);
                         }, 10000); // 10 second timeout
                         
                         this.iframe.addEventListener('load', () => {
@@ -2105,7 +3742,6 @@
                     this.hideLoading();
                     this.hideLoadingProgress();
                     this.showErrorMessage(`Unable to load course: ${course.title}`);
-                    Toast.show(`Failed to load: ${course.title}`, 'error');
                     return false;
                 }
             },
@@ -2233,7 +3869,6 @@
                 } catch (error) {
                     console.error('Failed to load external URL:', error);
                     this.showErrorMessage(`Unable to load external content: ${url}`);
-                    Toast.show('Failed to load external content', 'error');
                     return false;
                 }
             },
@@ -2338,16 +3973,70 @@
             // Show content controls
             showContentControls() {
                 const controls = document.getElementById('content-controls');
+                const breadcrumb = document.getElementById('breadcrumb');
+                
                 if (controls && this.currentCourse) {
                     controls.style.display = 'flex';
                 }
+                
+                if (breadcrumb && this.currentCourse) {
+                    const course = courses.find(c => c.id === this.currentCourse);
+                    if (course) {
+                        document.getElementById('breadcrumb-folder').textContent = course.folder || 'Courses';
+                        document.getElementById('breadcrumb-course').textContent = course.title;
+                        breadcrumb.style.display = 'flex';
+                    }
+                }
+
+                // Start time tracking
+                TimeTracker.start(this.currentCourse);
+
+                // Update button states
+                this.updateControlStates();
             },
 
             // Hide content controls
             hideContentControls() {
                 const controls = document.getElementById('content-controls');
+                const breadcrumb = document.getElementById('breadcrumb');
+                
                 if (controls) {
                     controls.style.display = 'none';
+                }
+                
+                if (breadcrumb) {
+                    breadcrumb.style.display = 'none';
+                }
+
+                // Stop time tracking
+                TimeTracker.stop();
+            },
+
+            // Update control button states
+            updateControlStates() {
+                if (!this.currentCourse) return;
+
+                const markBtn = document.getElementById('mark-complete-btn');
+                const bookmarkBtn = document.getElementById('bookmark-btn');
+                
+                if (markBtn) {
+                    if (ProgressTracker.isCompleted(this.currentCourse)) {
+                        markBtn.classList.add('completed');
+                        markBtn.title = 'Mark as Incomplete';
+                    } else {
+                        markBtn.classList.remove('completed');
+                        markBtn.title = 'Mark as Complete';
+                    }
+                }
+
+                if (bookmarkBtn) {
+                    if (ProgressTracker.isBookmarked(this.currentCourse)) {
+                        bookmarkBtn.classList.add('bookmarked');
+                        bookmarkBtn.querySelector('i').className = 'fas fa-bookmark';
+                    } else {
+                        bookmarkBtn.classList.remove('bookmarked');
+                        bookmarkBtn.querySelector('i').className = 'far fa-bookmark';
+                    }
                 }
             },
 
@@ -2357,7 +4046,34 @@
                 const fullscreenBtn = document.getElementById('fullscreen-btn');
                 const backBtn = document.getElementById('back-btn');
                 const forwardBtn = document.getElementById('forward-btn');
+                const markCompleteBtn = document.getElementById('mark-complete-btn');
+                const bookmarkBtn = document.getElementById('bookmark-btn');
                 const contentArea = document.querySelector('.content-area');
+
+                // Mark Complete button
+                if (markCompleteBtn) {
+                    markCompleteBtn.addEventListener('click', () => {
+                        if (!this.currentCourse) return;
+                        
+                        if (ProgressTracker.isCompleted(this.currentCourse)) {
+                            ProgressTracker.markIncomplete(this.currentCourse);
+                        } else {
+                            ProgressTracker.markComplete(this.currentCourse);
+                        }
+                        this.updateControlStates();
+                        Achievements.check();
+                    });
+                }
+
+                // Bookmark button
+                if (bookmarkBtn) {
+                    bookmarkBtn.addEventListener('click', () => {
+                        if (!this.currentCourse) return;
+                        ProgressTracker.toggleBookmark(this.currentCourse);
+                        this.updateControlStates();
+                        Achievements.check();
+                    });
+                }
 
                 // Refresh button
                 if (refreshBtn) {
@@ -2579,6 +4295,9 @@
 
                 const courseLink = document.createElement('a');
                 courseLink.className = course.comingSoon ? 'course-link coming-soon' : 'course-link';
+                if (ProgressTracker.isCompleted(course.id)) {
+                    courseLink.classList.add('completed');
+                }
                 courseLink.href = '#';
                 courseLink.dataset.courseId = course.id;
                 courseLink.title = course.description || course.title;
@@ -2593,9 +4312,14 @@
                 titleElement.className = 'course-title';
                 titleElement.textContent = course.title;
 
+                // Create completion checkmark
+                const checkElement = document.createElement('i');
+                checkElement.className = 'fas fa-check-circle course-check';
+
                 // Assemble the course link
                 courseLink.appendChild(iconElement);
                 courseLink.appendChild(titleElement);
+                courseLink.appendChild(checkElement);
                 listItem.appendChild(courseLink);
 
                 return listItem;
@@ -2803,6 +4527,32 @@
                         }
                     }
                     
+                    // Alt + T: Toggle theme
+                    if (e.altKey && e.key === 't') {
+                        e.preventDefault();
+                        ThemeManager.toggle();
+                    }
+
+                    // B: Toggle bookmark
+                    if (e.key === 'b' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                        const searchInput = document.getElementById('course-search');
+                        if (document.activeElement !== searchInput) {
+                            e.preventDefault();
+                            const bookmarkBtn = document.getElementById('bookmark-btn');
+                            if (bookmarkBtn) bookmarkBtn.click();
+                        }
+                    }
+
+                    // M: Mark complete
+                    if (e.key === 'm' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                        const searchInput = document.getElementById('course-search');
+                        if (document.activeElement !== searchInput) {
+                            e.preventDefault();
+                            const markBtn = document.getElementById('mark-complete-btn');
+                            if (markBtn) markBtn.click();
+                        }
+                    }
+                    
                     // Escape: Close mobile menu, clear search
                     if (e.key === 'Escape') {
                         const navPanel = document.getElementById('navigation-panel');
@@ -2821,6 +4571,23 @@
 
         // Application initialization
         document.addEventListener('DOMContentLoaded', function () {
+            // Initialize theme
+            ThemeManager.init();
+
+            // Initialize settings
+            SettingsManager.init();
+
+            // Initialize modal system
+            ModalManager.init();
+
+            // Initialize achievements
+            Achievements.updateBadge();
+            Achievements.check();
+
+            // Initialize progress tracking
+            ProgressTracker.updateUI();
+            ProgressTracker.updateRecentMenu();
+
             // Render navigation from course data
             NavigationRenderer.renderNavigation();
 
@@ -2842,8 +4609,140 @@
             // Initialize keyboard shortcuts
             KeyboardShortcuts.init();
 
-            console.log('Akamai API Gateway Learning Platform initialized successfully');
+            // Setup header controls
+            setupHeaderControls();
+
+            // Welcome message for first-time users
+            if (!Storage.get('welcomed', false)) {
+                setTimeout(() => {
+                    Toast.show('Welcome to Akamai Learning Platform! 🎉', 'success', 4000);
+                    Storage.set('welcomed', true);
+                }, 1000);
+            }
+
+            console.log('🚀 Akamai API Gateway Learning Platform v2.0 initialized successfully');
         });
+
+        // Modal Manager
+        const ModalManager = {
+            open(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                    
+                    // Update content if needed
+                    if (modalId === 'settings-modal') {
+                        SettingsManager.updateStats();
+                    } else if (modalId === 'achievements-modal') {
+                        Achievements.render();
+                    }
+                }
+            },
+
+            close(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.remove('show');
+                    document.body.style.overflow = '';
+                }
+            },
+
+            init() {
+                // Close on overlay click
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            this.close(modal.id);
+                        }
+                    });
+                });
+
+                // Close buttons
+                document.querySelectorAll('.modal-close').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const modal = btn.closest('.modal-overlay');
+                        if (modal) this.close(modal.id);
+                    });
+                });
+
+                // Escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        document.querySelectorAll('.modal-overlay.show').forEach(modal => {
+                            this.close(modal.id);
+                        });
+                    }
+                });
+            }
+        };
+
+        // Setup header controls
+        function setupHeaderControls() {
+            // Recently viewed dropdown
+            const recentBtn = document.getElementById('recent-btn');
+            const recentMenu = document.getElementById('recent-menu');
+            
+            if (recentBtn && recentMenu) {
+                recentBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    recentMenu.classList.toggle('show');
+                });
+
+                // Close on outside click
+                document.addEventListener('click', (e) => {
+                    if (!recentMenu.contains(e.target) && e.target !== recentBtn) {
+                        recentMenu.classList.remove('show');
+                    }
+                });
+            }
+
+            // Settings button
+            const settingsBtn = document.getElementById('settings-btn');
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', () => {
+                    ModalManager.open('settings-modal');
+                });
+            }
+
+            // Achievements button
+            const achievementsBtn = document.getElementById('achievements-btn');
+            if (achievementsBtn) {
+                achievementsBtn.addEventListener('click', () => {
+                    ModalManager.open('achievements-modal');
+                });
+            }
+
+            // Theme selector in modal
+            document.querySelectorAll('.theme-option').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const theme = this.dataset.theme;
+                    
+                    if (theme === 'auto') {
+                        // Auto theme based on system preference
+                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        ThemeManager.current = prefersDark ? 'dark' : 'light';
+                    } else {
+                        ThemeManager.current = theme;
+                    }
+                    
+                    ThemeManager.apply();
+                    Storage.set('theme', ThemeManager.current);
+                    
+                    // Update active state
+                    document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Set initial active theme
+            const currentTheme = ThemeManager.current;
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                if (opt.dataset.theme === currentTheme) {
+                    opt.classList.add('active');
+                }
+            });
+        }
     </script>
 </body>
 
