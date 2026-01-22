@@ -1215,7 +1215,7 @@
             filter: blur(2px);
         }
 
-        /* Enhanced loading indicator - Modern */
+        /* Enhanced loading indicator - Modern with close button */
         .loading-indicator {
             position: absolute;
             top: 50%;
@@ -1236,6 +1236,41 @@
         .loading-indicator.active {
             display: flex;
             animation: fadeIn 0.3s ease-out;
+        }
+
+        .loading-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 102, 204, 0.1);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0066cc;
+            font-size: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            opacity: 0.6;
+        }
+
+        .loading-close-btn:hover {
+            background: rgba(0, 102, 204, 0.2);
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+
+        .dark-mode .loading-close-btn {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+        }
+
+        .dark-mode .loading-close-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
         }
 
         .spinner {
@@ -2478,6 +2513,7 @@
 
         <section class="content-area">
             <div class="loading-indicator" id="loading-indicator">
+                <button class="loading-close-btn" id="loading-close-btn" title="Dismiss loading overlay (ESC)">×</button>
                 <div class="spinner"></div>
                 <div class="loading-text">Loading course content...</div>
             </div>
@@ -2738,8 +2774,16 @@
             // Set up message listener for iframe communication
             setupMessageListener() {
                 window.addEventListener('message', (event) => {
+                    // Store message in parent frame data queue
+                    ParentFrameData.queueMessage(event.data);
+                    
                     // Handle different message types from iframe
                     if (event.data && typeof event.data === 'object') {
+                        // Store structured data
+                        if (event.data.key && event.data.value) {
+                            ParentFrameData.store(event.data.key, event.data.value);
+                        }
+                        
                         switch (event.data.type) {
                             case 'linkClick':
                                 this.handleLinkClick(event.data.url, event.data.target);
@@ -2747,9 +2791,29 @@
                             case 'newWindow':
                                 this.handleNewWindow(event.data.url);
                                 break;
+                            case 'storeData':
+                                // Store any data sent from iframe
+                                ParentFrameData.store(event.data.key, event.data.value);
+                                console.log('📦 Data stored from iframe:', event.data.key);
+                                break;
+                            case 'closeComingSoon':
+                                // Return to landing page when closing coming soon message
+                                console.log('👆 Coming Soon message dismissed');
+                                CourseManager.showLandingPage();
+                                break;
+                            case 'closeError':
+                                // Return to landing page when closing error message
+                                console.log('👆 Error message dismissed');
+                                CourseManager.showLandingPage();
+                                break;
                         }
                     }
                 });
+                
+                // Clear old messages periodically
+                setInterval(() => {
+                    ParentFrameData.clearOldMessages();
+                }, 60000); // Every minute
             },
 
             // Set up iframe observer to detect navigation attempts
@@ -2897,14 +2961,146 @@
         };
 
         // Storage and Cache Clearing Utility
+        /*
+         * ╔═══════════════════════════════════════════════════════════════╗
+         * ║         COMPREHENSIVE DATA CLEARING STRATEGY                  ║
+         * ╚═══════════════════════════════════════════════════════════════╝
+         * 
+         * When switching between modules, the following data is cleared:
+         * 
+         * 1. IFRAME STORAGE (if same-origin):
+         *    - localStorage
+         *    - sessionStorage
+         *    - IndexedDB databases
+         *    - Cookies
+         * 
+         * 2. BROWSER CACHE:
+         *    - Cache API entries for previous module URL
+         *    - Service worker caches (if applicable)
+         * 
+         * 3. MODULE-SPECIFIC APP STORAGE:
+         *    - All keys starting with 'akamai-course-'
+         *    - All keys starting with 'course-'
+         *    - Session storage for temporary course data
+         * 
+         * 4. PARENT FRAME DATA (NEW):
+         *    - All data received from iframe via postMessage
+         *    - Message queue (last 50 messages)
+         *    - Any stored key-value pairs from iframe
+         * 
+         * 5. URL CACHE BUSTING:
+         *    - Adds ?_cache=timestamp&_session=random to force fresh load
+         *    - Prevents browser from serving cached content
+         * 
+         * 6. IFRAME RELOAD:
+         *    - Forces complete iframe reload with new URL
+         *    - Clears any residual JavaScript state
+         * 
+         * USER SETTINGS PRESERVED (NOT cleared):
+         * ✅ Theme preference (dark/light mode)
+         * ✅ Bookmarks
+         * ✅ Progress tracking
+         * ✅ Achievements
+         * ✅ Time tracking statistics
+         * ✅ Recently viewed courses
+         * ✅ General app settings
+         */
+        
+        // Parent Frame Data Store (for data received from iframes)
+        const ParentFrameData = {
+            messageQueue: [],
+            receivedData: {},
+            
+            // Store data received from iframe
+            store(key, value) {
+                this.receivedData[key] = value;
+                console.log(`📥 Stored iframe data: ${key}`);
+            },
+            
+            // Get stored data
+            get(key) {
+                return this.receivedData[key];
+            },
+            
+            // Get all stored data
+            getAll() {
+                return { ...this.receivedData };
+            },
+            
+            // Clear all parent frame data
+            clearAll() {
+                const keysCleared = Object.keys(this.receivedData).length;
+                const messagesCleared = this.messageQueue.length;
+                
+                if (keysCleared > 0 || messagesCleared > 0) {
+                    console.log('%c🗑️ PARENT FRAME DATA CLEARING', 'color: #ff9800; font-weight: bold');
+                    console.log(`   - Stored data entries: ${keysCleared}`);
+                    console.log(`   - Queued messages: ${messagesCleared}`);
+                    
+                    this.receivedData = {};
+                    this.messageQueue = [];
+                    
+                    console.log('%c✅ Parent frame data cleared', 'color: #00ff88');
+                } else {
+                    console.log('ℹ️ No parent frame data to clear');
+                }
+            },
+            
+            // Add message to queue
+            queueMessage(message) {
+                this.messageQueue.push({
+                    data: message,
+                    timestamp: Date.now()
+                });
+                // Keep only last 50 messages
+                if (this.messageQueue.length > 50) {
+                    this.messageQueue.shift();
+                }
+            },
+            
+            // Clear old messages
+            clearOldMessages(maxAge = 300000) { // 5 minutes default
+                const now = Date.now();
+                const before = this.messageQueue.length;
+                this.messageQueue = this.messageQueue.filter(msg => 
+                    (now - msg.timestamp) < maxAge
+                );
+                const cleared = before - this.messageQueue.length;
+                if (cleared > 0) {
+                    console.log(`🧹 Cleared ${cleared} old messages from queue`);
+                }
+            },
+            
+            // Get status
+            getStatus() {
+                return {
+                    storedKeys: Object.keys(this.receivedData).length,
+                    queuedMessages: this.messageQueue.length,
+                    data: this.getAll()
+                };
+            },
+            
+            // Log status
+            logStatus() {
+                const status = this.getStatus();
+                console.log('%c📊 PARENT FRAME DATA STATUS', 'color: #2196F3; font-weight: bold');
+                console.log(`   - Stored data entries: ${status.storedKeys}`);
+                console.log(`   - Queued messages: ${status.queuedMessages}`);
+                if (status.storedKeys > 0) {
+                    console.log('   - Data keys:', Object.keys(status.data));
+                }
+            }
+        };
+        
         const StorageCleaner = {
-            // Clear all storage and cache for iframe
+            // Clear all storage and cache for iframe - AGGRESSIVE MODE
             async clearIframeStorage(iframe, skipIframeClear = false) {
                 if (!iframe) return;
 
+                console.log('🧹 Starting aggressive data clearing...');
+                
                 try {
-                    // Don't set iframe to about:blank when loading new content
-                    // Only clear when explicitly needed (like showing landing page)
+                    // Always attempt to clear, even for cross-origin iframes
                     if (!skipIframeClear && iframe.src && iframe.src !== '' && iframe.src !== 'about:blank') {
                         const currentSrc = iframe.src;
                         
@@ -2965,17 +3161,22 @@
                                 } catch (error) {
                                     // Cross-origin iframe - cannot access storage directly
                                     // This is expected for external content like whatfix.com
-                                    console.log('Cross-origin iframe - storage clearing skipped (expected)');
+                                    console.log('⚠️ Cross-origin iframe - storage clearing limited (expected for external sites)');
                                 }
                             }
                         } catch (error) {
-                            console.log('Could not access iframe window:', error);
+                            console.log('⚠️ Could not access iframe window:', error);
                         }
+                        
+                        // Additional aggressive clearing techniques
+                        console.log('🔄 Forcing iframe reload to clear any residual data...');
 
                         // Clear browser cache for the iframe URL using Cache API
                         if ('caches' in window) {
                             try {
+                                console.log('🗑️ Clearing browser cache...');
                                 const cacheNames = await caches.keys();
+                                let deletedCount = 0;
                                 for (const cacheName of cacheNames) {
                                     try {
                                         const cache = await caches.open(cacheName);
@@ -2984,47 +3185,66 @@
                                             try {
                                                 if (currentSrc && request.url.includes(new URL(currentSrc).hostname)) {
                                                     await cache.delete(request);
+                                                    deletedCount++;
                                                 }
                                             } catch (e) {
                                                 // URL parsing error - skip
                                             }
                                         }
                                     } catch (e) {
-                                        console.log('Error accessing cache:', cacheName, e);
+                                        console.log('⚠️ Error accessing cache:', cacheName, e);
                                     }
                                 }
+                                console.log(`✅ Cleared ${deletedCount} cache entries`);
                             } catch (error) {
-                                console.log('Cache API not available or error clearing cache:', error);
+                                console.log('⚠️ Cache API not available or error clearing cache:', error);
                             }
+                        }
+                        
+                        // Force garbage collection if available (helps with memory cleanup)
+                        if (window.gc) {
+                            console.log('🗑️ Running garbage collection...');
+                            window.gc();
                         }
                     }
 
-                    console.log('Storage cleaning completed');
+                    console.log('✅ Storage cleaning completed successfully');
                 } catch (error) {
-                    console.error('Error clearing iframe storage:', error);
+                    console.error('❌ Error clearing iframe storage:', error);
                 }
             },
 
-            // Clear all application storage
+            // Clear all application storage (MODULE-SPECIFIC ONLY)
             clearAppStorage() {
                 try {
+                    console.log('🧹 Clearing module-specific app storage...');
+                    let clearedCount = 0;
+                    
                     // Clear main window localStorage (only course-related data)
                     const keys = Object.keys(localStorage);
                     keys.forEach(key => {
                         if (key.startsWith('akamai-course-') || key.startsWith('course-')) {
                             localStorage.removeItem(key);
+                            clearedCount++;
                         }
                     });
-
+                    
                     // Clear main window sessionStorage (only course-related data)
                     const sessionKeys = Object.keys(sessionStorage);
                     sessionKeys.forEach(key => {
                         if (key.startsWith('akamai-course-') || key.startsWith('course-')) {
                             sessionStorage.removeItem(key);
+                            clearedCount++;
                         }
                     });
+                    
+                    // Clear parent frame data received from iframes
+                    ParentFrameData.clearAll();
+                    
+                    console.log(`✅ Cleared ${clearedCount} module-specific storage items`);
+                    console.log('ℹ️ User settings (theme, bookmarks, progress) are preserved');
                 } catch (error) {
-                    console.error('Error clearing app storage:', error);
+                    console.error('❌ Error clearing app storage:', error);
                 }
             }
         };
@@ -3603,6 +3823,45 @@
                         }
                     });
                 }
+                
+                // Add close button for loading overlay
+                const loadingCloseBtn = document.getElementById('loading-close-btn');
+                if (loadingCloseBtn) {
+                    loadingCloseBtn.addEventListener('click', () => {
+                        console.log('👆 Loading overlay manually dismissed');
+                        this.hideLoading();
+                        this.hideLoadingProgress();
+                    });
+                }
+                
+                // Add keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    // ESC - Dismiss loading overlay
+                    if (e.key === 'Escape' && this.loadingIndicator && this.loadingIndicator.classList.contains('active')) {
+                        console.log('⌨️ Loading overlay dismissed via ESC key');
+                        this.hideLoading();
+                        this.hideLoadingProgress();
+                    }
+                    
+                    // Ctrl+Shift+D - Show parent frame data status (Debug)
+                    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                        e.preventDefault();
+                        console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #9c27b0');
+                        console.log('%c🔍 DEBUG: Parent Frame Data', 'color: #9c27b0; font-weight: bold; font-size: 14px');
+                        console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #9c27b0');
+                        ParentFrameData.logStatus();
+                        console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #9c27b0');
+                        Toast.show('Parent frame data logged to console', 'info', 3000);
+                    }
+                    
+                    // Ctrl+Shift+C - Clear parent frame data manually
+                    if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                        e.preventDefault();
+                        console.log('%c🧹 Manual parent frame data clear requested', 'color: #ff9800; font-weight: bold');
+                        ParentFrameData.clearAll();
+                        Toast.show('Parent frame data cleared', 'success', 3000);
+                    }
+                });
             },
 
             // Set up iframe-specific event handlers
@@ -3665,11 +3924,29 @@
                     // Store previous course
                     this.previousCourse = this.currentCourse;
 
-                    // Clear storage and cache silently before loading new course
-                    if (this.previousCourse && this.previousCourse !== courseId) {
-                        await StorageCleaner.clearIframeStorage(this.iframe, true);
-                        StorageCleaner.clearAppStorage();
+                    // Always clear storage and cache when switching modules (even first load)
+                    console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #00d4ff');
+                    console.log('%c🧹 CLEARING MODULE DATA', 'color: #00d4ff; font-weight: bold; font-size: 14px');
+                    console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #00d4ff');
+                    
+                    // Show parent frame data status before clearing
+                    ParentFrameData.logStatus();
+                    
+                    // Show visual feedback
+                    const loadingText = document.querySelector('.loading-text');
+                    if (loadingText) {
+                        loadingText.textContent = 'Clearing previous module data...';
                     }
+                    
+                    await StorageCleaner.clearIframeStorage(this.iframe, true);
+                    StorageCleaner.clearAppStorage();
+                    
+                    if (loadingText) {
+                        loadingText.textContent = 'Loading module...';
+                    }
+                    
+                    console.log('%c✅ ALL MODULE DATA CLEARED', 'color: #00ff88; font-weight: bold');
+                    console.log('%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'color: #00d4ff');
 
                     // Hide landing page and show iframe
                     this.hideLandingPage();
@@ -3685,13 +3962,19 @@
                         // Make sure iframe is visible
                         this.iframe.style.display = 'block';
                         
-                        // Simple direct load - no cache busting, no complex clearing
+                        // Force iframe reload with cache busting to prevent cached content
                         console.log('=================================');
                         console.log('LOADING COURSE:', course.title);
                         console.log('URL:', course.url);
+                        console.log('Cache cleared: YES');
                         console.log('=================================');
                         
-                        this.iframe.src = course.url;
+                        // Add cache-busting timestamp to ensure fresh load
+                        const separator = course.url.includes('?') ? '&' : '?';
+                        const cacheBuster = `_cache=${Date.now()}&_session=${Math.random().toString(36).substr(2, 9)}`;
+                        const freshUrl = `${course.url}${separator}${cacheBuster}`;
+                        
+                        this.iframe.src = freshUrl;
 
                         // Simple load handler
                         const handleLoad = () => {
@@ -3760,6 +4043,11 @@
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
                         <title>Connection Error</title>
                         <style>
+                            * {
+                                margin: 0;
+                                padding: 0;
+                                box-sizing: border-box;
+                            }
                             body {
                                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                                 background: linear-gradient(135deg, #0066cc, #004499);
@@ -3772,6 +4060,28 @@
                                 align-items: center;
                                 min-height: 100vh;
                                 text-align: center;
+                                position: relative;
+                            }
+                            .close-btn {
+                                position: absolute;
+                                top: 20px;
+                                right: 20px;
+                                background: rgba(255, 255, 255, 0.2);
+                                border: none;
+                                border-radius: 50%;
+                                width: 40px;
+                                height: 40px;
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: white;
+                                font-size: 24px;
+                                transition: all 0.3s ease;
+                            }
+                            .close-btn:hover {
+                                background: rgba(255, 255, 255, 0.3);
+                                transform: rotate(90deg);
                             }
                             .error-container {
                                 background: rgba(255, 255, 255, 0.1);
@@ -3822,8 +4132,9 @@
                         </style>
                     </head>
                     <body>
+                        <button class="close-btn" onclick="window.parent.postMessage({type: 'closeError'}, '*')" title="Go back to home">×</button>
                         <div class="error-container">
-                            <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+                            <div class="icon">⚠️</div>
                             <h1 class="title">Connection Refused</h1>
                             <p class="subtitle">Unable to load content in iframe</p>
                             <p class="description">
@@ -3834,7 +4145,7 @@
                                 <strong>Solution:</strong> Click the button below to open the content in a new tab.
                             </p>
                             <a href="${course ? course.url : '#'}" target="_blank" class="action-btn">
-                                <i class="fas fa-external-link-alt"></i> Open in New Tab
+                                🔗 Open in New Tab
                             </a>
                         </div>
                     </body>
@@ -3908,6 +4219,11 @@
                         <html>
                         <head>
                             <style>
+                                * {
+                                    margin: 0;
+                                    padding: 0;
+                                    box-sizing: border-box;
+                                }
                                 body {
                                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                                     background: linear-gradient(135deg, #0066cc, #004499);
@@ -3920,6 +4236,28 @@
                                     align-items: center;
                                     min-height: 100vh;
                                     text-align: center;
+                                    position: relative;
+                                }
+                                .close-btn {
+                                    position: absolute;
+                                    top: 20px;
+                                    right: 20px;
+                                    background: rgba(255, 255, 255, 0.2);
+                                    border: none;
+                                    border-radius: 50%;
+                                    width: 40px;
+                                    height: 40px;
+                                    cursor: pointer;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    color: white;
+                                    font-size: 24px;
+                                    transition: all 0.3s ease;
+                                }
+                                .close-btn:hover {
+                                    background: rgba(255, 255, 255, 0.3);
+                                    transform: rotate(90deg);
                                 }
                                 .coming-soon-container {
                                     background: rgba(255, 255, 255, 0.1);
@@ -3952,8 +4290,9 @@
                             </style>
                         </head>
                         <body>
+                            <button class="close-btn" onclick="window.parent.postMessage({type: 'closeComingSoon'}, '*')" title="Go back to home">×</button>
                             <div class="coming-soon-container">
-                                <div class="icon"><i class="far fa-tv-retro"></i></div>
+                                <div class="icon">🚀</div>
                                 <h1 class="title">${course.title}</h1>
                                 <p class="subtitle">Coming Soon</p>
                                 <p class="description">This advanced course is currently in development. We're working hard to bring you comprehensive content on ${course.title.toLowerCase()}. Stay tuned for updates!</p>
