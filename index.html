@@ -511,6 +511,21 @@
             box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.02);
         }
 
+        .content-area.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            border-radius: 0;
+        }
+
+        .content-area.fullscreen .content-controls {
+            top: 20px;
+            right: 20px;
+        }
+
         #content-frame {
             width: 100%;
             height: 100%;
@@ -925,6 +940,190 @@
             }
         }
 
+        /* Content Controls */
+        .content-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .content-controls:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-btn {
+            background: var(--akamai-blue);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .control-btn:hover {
+            background: var(--akamai-orange);
+            transform: scale(1.1);
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Search Container */
+        .search-container {
+            position: relative;
+            margin: 15px 20px;
+            max-width: 300px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--akamai-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--akamai-blue);
+            pointer-events: none;
+        }
+
+        .navigation-panel.collapsed .search-container {
+            display: none;
+        }
+
+        /* Filtered course items */
+        .course-item.filtered {
+            display: none;
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--akamai-dark-blue);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideInRight 0.3s ease-out;
+            max-width: 350px;
+        }
+
+        .toast.success {
+            background: #10b981;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        .toast.warning {
+            background: var(--akamai-orange);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Loading progress bar */
+        .loading-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--akamai-blue), var(--akamai-orange));
+            z-index: 100;
+            transition: width 0.3s ease;
+        }
+
+        .loading-progress.active {
+            animation: loadingProgress 2s ease-in-out infinite;
+        }
+
+        @keyframes loadingProgress {
+            0% {
+                width: 0%;
+                left: 0;
+            }
+            50% {
+                width: 70%;
+                left: 0;
+            }
+            100% {
+                width: 100%;
+                left: 100%;
+            }
+        }
+
+        /* Improved responsive design */
+        @media (max-width: 1024px) {
+            .content-controls {
+                top: 10px;
+                right: 10px;
+                padding: 6px;
+                gap: 8px;
+            }
+
+            .control-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+
+            .search-container {
+                margin: 10px 15px;
+                max-width: 250px;
+            }
+        }
+
         /* Folder styling for navigation */
         .folder-header {
             background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
@@ -1029,8 +1228,12 @@
             }
 
             .course-link.active {
-                background-color: var(--primary-color);
+                background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
                 color: white;
+            }
+            
+            .course-link.active .course-icon {
+                color: var(--akamai-orange);
             }
 
             .course-icon {
@@ -1040,6 +1243,24 @@
             .content-area {
                 height: calc(100vh - var(--header-height));
                 margin-top: 0;
+            }
+
+            .content-controls {
+                top: 10px;
+                right: 10px;
+                padding: 6px;
+                gap: 6px;
+            }
+
+            .control-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+
+            .search-container {
+                margin: 10px;
+                max-width: 100%;
             }
 
             /* Landing page responsive adjustments */
@@ -1136,6 +1357,21 @@
                 padding: 1rem 2rem;
                 font-size: 1rem;
             }
+
+            .content-controls {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                top: auto;
+                flex-direction: column;
+            }
+
+            .toast {
+                bottom: 80px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
         }
     </style>
 </head>
@@ -1217,10 +1453,32 @@
             </div>
 
             <iframe id="content-frame" src="" title="Course Content"
-                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
-                allowfullscreen style="display: none;">
+                allowfullscreen 
+                style="display: none;">
                 <p>Your browser does not support iframes. Please update your browser to view the content.</p>
             </iframe>
+            
+            <!-- Content Controls -->
+            <div class="content-controls" id="content-controls" style="display: none;">
+                <button class="control-btn" id="refresh-btn" title="Refresh Content (Ctrl+R)">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="control-btn" id="fullscreen-btn" title="Toggle Fullscreen (F11)">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button class="control-btn" id="back-btn" title="Go Back">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <button class="control-btn" id="forward-btn" title="Go Forward">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-container" id="search-container">
+                <input type="text" class="search-input" id="course-search" placeholder="Search courses...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
         </section>
     </main>
 
@@ -1471,12 +1729,172 @@
             }
         };
 
+        // Storage and Cache Clearing Utility
+        const StorageCleaner = {
+            // Clear all storage and cache for iframe
+            async clearIframeStorage(iframe, skipIframeClear = false) {
+                if (!iframe) return;
+
+                try {
+                    // Don't set iframe to about:blank when loading new content
+                    // Only clear when explicitly needed (like showing landing page)
+                    if (!skipIframeClear && iframe.src && iframe.src !== '' && iframe.src !== 'about:blank') {
+                        const currentSrc = iframe.src;
+                        
+                        // Try to access iframe's storage (only works for same-origin)
+                        try {
+                            const iframeWindow = iframe.contentWindow;
+                            if (iframeWindow) {
+                                try {
+                                    // Only try to clear if same-origin
+                                    if (iframeWindow.location.origin === window.location.origin) {
+                                        // Clear localStorage
+                                        if (iframeWindow.localStorage) {
+                                            iframeWindow.localStorage.clear();
+                                        }
+                                        
+                                        // Clear sessionStorage
+                                        if (iframeWindow.sessionStorage) {
+                                            iframeWindow.sessionStorage.clear();
+                                        }
+                                        
+                                        // Clear IndexedDB
+                                        if ('indexedDB' in iframeWindow) {
+                                            const databases = await iframeWindow.indexedDB.databases();
+                                            for (const db of databases) {
+                                                if (db.name) {
+                                                    try {
+                                                        const deleteReq = iframeWindow.indexedDB.deleteDatabase(db.name);
+                                                        await new Promise((resolve) => {
+                                                            deleteReq.onsuccess = () => resolve();
+                                                            deleteReq.onerror = () => resolve(); // Continue even on error
+                                                            deleteReq.onblocked = () => resolve(); // Continue even if blocked
+                                                            setTimeout(() => resolve(), 1000); // Timeout after 1 second
+                                                        });
+                                                    } catch (e) {
+                                                        console.log('Could not delete database:', db.name, e);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        
+                                        // Clear cookies (if accessible)
+                                        if (iframeWindow.document) {
+                                            try {
+                                                const cookies = iframeWindow.document.cookie.split(";");
+                                                for (let cookie of cookies) {
+                                                    const eqPos = cookie.indexOf("=");
+                                                    const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+                                                    if (name) {
+                                                        // Delete cookie by setting it to expire
+                                                        iframeWindow.document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+                                                    }
+                                                }
+                                            } catch (e) {
+                                                console.log('Could not clear cookies:', e);
+                                            }
+                                        }
+                                    }
+                                } catch (error) {
+                                    // Cross-origin iframe - cannot access storage directly
+                                    // This is expected for external content like whatfix.com
+                                    console.log('Cross-origin iframe - storage clearing skipped (expected)');
+                                }
+                            }
+                        } catch (error) {
+                            console.log('Could not access iframe window:', error);
+                        }
+
+                        // Clear browser cache for the iframe URL using Cache API
+                        if ('caches' in window) {
+                            try {
+                                const cacheNames = await caches.keys();
+                                for (const cacheName of cacheNames) {
+                                    try {
+                                        const cache = await caches.open(cacheName);
+                                        const requests = await cache.keys();
+                                        for (const request of requests) {
+                                            try {
+                                                if (currentSrc && request.url.includes(new URL(currentSrc).hostname)) {
+                                                    await cache.delete(request);
+                                                }
+                                            } catch (e) {
+                                                // URL parsing error - skip
+                                            }
+                                        }
+                                    } catch (e) {
+                                        console.log('Error accessing cache:', cacheName, e);
+                                    }
+                                }
+                            } catch (error) {
+                                console.log('Cache API not available or error clearing cache:', error);
+                            }
+                        }
+                    }
+
+                    console.log('Storage cleaning completed');
+                } catch (error) {
+                    console.error('Error clearing iframe storage:', error);
+                }
+            },
+
+            // Clear all application storage
+            clearAppStorage() {
+                try {
+                    // Clear main window localStorage (only course-related data)
+                    const keys = Object.keys(localStorage);
+                    keys.forEach(key => {
+                        if (key.startsWith('akamai-course-') || key.startsWith('course-')) {
+                            localStorage.removeItem(key);
+                        }
+                    });
+
+                    // Clear main window sessionStorage (only course-related data)
+                    const sessionKeys = Object.keys(sessionStorage);
+                    sessionKeys.forEach(key => {
+                        if (key.startsWith('akamai-course-') || key.startsWith('course-')) {
+                            sessionStorage.removeItem(key);
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error clearing app storage:', error);
+                }
+            }
+        };
+
+        // Toast Notification System
+        const Toast = {
+            show(message, type = 'info', duration = 3000) {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                
+                const icon = type === 'success' ? 'fa-check-circle' : 
+                            type === 'error' ? 'fa-exclamation-circle' : 
+                            type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+                
+                toast.innerHTML = `
+                    <i class="fas ${icon}"></i>
+                    <span>${message}</span>
+                `;
+                
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.animation = 'slideInRight 0.3s ease-out reverse';
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
+            }
+        };
+
         // CourseManager object for managing course navigation and loading
         const CourseManager = {
             currentCourse: null,
+            previousCourse: null,
             iframe: null,
             landingPage: null,
             loadingIndicator: null,
+            iframeHistory: [],
+            historyIndex: -1,
 
             // Initialize the course manager
             init() {
@@ -1485,6 +1903,7 @@
                 this.loadingIndicator = document.getElementById('loading-indicator');
                 this.setupEventListeners();
                 this.setupIframeHandlers();
+                this.setupContentControls();
 
                 // Show landing page by default instead of loading a course
                 if (AppConfig.showLandingPage) {
@@ -1514,7 +1933,11 @@
                     this.landingPage.style.display = 'flex';
                     this.iframe.style.display = 'none';
                     this.currentCourse = null;
+                    this.previousCourse = null;
                     this.updateActiveState(null);
+                    this.hideContentControls();
+                    // Clear iframe completely when showing landing page
+                    this.iframe.src = 'about:blank';
                 }
             },
 
@@ -1555,24 +1978,45 @@
             // Set up iframe-specific event handlers
             setupIframeHandlers() {
                 if (this.iframe) {
-                    // Handle iframe load events
-                    this.iframe.addEventListener('load', () => {
-                        console.log('Iframe content loaded');
+                    // Global load event for debugging
+                    this.iframe.addEventListener('load', (event) => {
+                        console.log('=== IFRAME LOAD EVENT ===');
+                        console.log('Current src:', this.iframe.src);
+                        console.log('Event:', event);
+                        
+                        try {
+                            const iframeWindow = this.iframe.contentWindow;
+                            if (iframeWindow) {
+                                try {
+                                    console.log('Iframe location:', iframeWindow.location.href);
+                                } catch (e) {
+                                    console.log('Cross-origin iframe (this is normal):', e.name);
+                                }
+                            }
+                        } catch (e) {
+                            console.log('Error checking iframe:', e);
+                        }
+                        
+                        console.log('========================');
                     });
 
                     // Handle iframe errors
                     this.iframe.addEventListener('error', (event) => {
-                        console.error('Iframe loading error:', event);
-                        this.showErrorMessage('Failed to load content');
+                        console.error('=== IFRAME ERROR EVENT ===');
+                        console.error('Error loading iframe:', event);
+                        console.error('Current src:', this.iframe.src);
+                        console.error('=========================');
+                        Toast.show('Failed to load content', 'error', 3000);
                     });
                 }
             },
 
             // Load a specific course by ID
-            loadCourse(courseId) {
+            async loadCourse(courseId) {
                 const course = courses.find(c => c.id === courseId);
                 if (!course) {
                     console.error(`Course with ID "${courseId}" not found`);
+                    Toast.show('Course not found', 'error');
                     return false;
                 }
 
@@ -1583,25 +2027,66 @@
                     return false;
                 }
 
+                // Don't clear if loading the same course
+                if (this.currentCourse === courseId) {
+                    Toast.show('Course already loaded', 'info', 2000);
+                    return true;
+                }
+
                 try {
+                    // Store previous course
+                    this.previousCourse = this.currentCourse;
+
                     // Hide landing page and show iframe
                     this.hideLandingPage();
 
                     // Show loading indicator
                     this.showLoading();
+                    this.showLoadingProgress();
 
                     // Add loading state
                     if (this.iframe) {
                         this.iframe.classList.add('loading');
+                        
+                        // Make sure iframe is visible
+                        this.iframe.style.display = 'block';
+                        
+                        // Simple direct load - no cache busting, no complex clearing
+                        console.log('=================================');
+                        console.log('LOADING COURSE:', course.title);
+                        console.log('URL:', course.url);
+                        console.log('=================================');
+                        
                         this.iframe.src = course.url;
 
-                        // Remove loading state after iframe loads
+                        // Simple load handler
                         const handleLoad = () => {
                             this.iframe.classList.remove('loading');
                             this.hideLoading();
-                            this.iframe.removeEventListener('load', handleLoad);
+                            this.hideLoadingProgress();
+                            
+                            console.log('Iframe loaded successfully');
+                            
+                            // Add to history
+                            this.addToHistory(course.url);
+                            
+                            // Update navigation controls
+                            this.updateNavigationControls();
+                            
+                            Toast.show(`Loaded: ${course.title}`, 'success', 2000);
                         };
-                        this.iframe.addEventListener('load', handleLoad);
+                        
+                        // Handle load timeout
+                        const loadTimeout = setTimeout(() => {
+                            this.hideLoading();
+                            this.hideLoadingProgress();
+                            Toast.show('Content is loading...', 'info', 2000);
+                        }, 10000); // 10 second timeout
+                        
+                        this.iframe.addEventListener('load', () => {
+                            clearTimeout(loadTimeout);
+                            handleLoad();
+                        }, { once: true });
                     }
 
                     // Update current course
@@ -1610,26 +2095,137 @@
                     // Update active state in navigation with animation
                     this.updateActiveState(courseId);
 
+                    // Show content controls
+                    this.showContentControls();
+
                     console.log(`Loaded course: ${course.title}`);
                     return true;
                 } catch (error) {
                     console.error('Failed to load course:', error);
                     this.hideLoading();
+                    this.hideLoadingProgress();
                     this.showErrorMessage(`Unable to load course: ${course.title}`);
+                    Toast.show(`Failed to load: ${course.title}`, 'error');
                     return false;
                 }
             },
 
+            // Handle connection refused errors
+            handleConnectionRefused(course) {
+                this.iframe.setAttribute('data-error', 'true');
+                this.hideLoading();
+                this.hideLoadingProgress();
+                
+                const errorHtml = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Connection Error</title>
+                        <style>
+                            body {
+                                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                                background: linear-gradient(135deg, #0066cc, #004499);
+                                color: white;
+                                margin: 0;
+                                padding: 40px;
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                                align-items: center;
+                                min-height: 100vh;
+                                text-align: center;
+                            }
+                            .error-container {
+                                background: rgba(255, 255, 255, 0.1);
+                                backdrop-filter: blur(10px);
+                                border-radius: 20px;
+                                padding: 60px 40px;
+                                border: 1px solid rgba(255, 255, 255, 0.2);
+                                max-width: 600px;
+                            }
+                            .icon {
+                                font-size: 4rem;
+                                margin-bottom: 2rem;
+                                color: #ff6600;
+                            }
+                            .title {
+                                font-size: 2.5rem;
+                                font-weight: 700;
+                                margin-bottom: 1rem;
+                            }
+                            .subtitle {
+                                font-size: 1.2rem;
+                                opacity: 0.9;
+                                margin-bottom: 2rem;
+                            }
+                            .description {
+                                font-size: 1rem;
+                                opacity: 0.8;
+                                line-height: 1.6;
+                                margin-bottom: 2rem;
+                            }
+                            .action-btn {
+                                background: linear-gradient(45deg, #ff6600, #ff8533);
+                                color: white;
+                                border: none;
+                                padding: 12px 30px;
+                                border-radius: 25px;
+                                font-size: 1rem;
+                                font-weight: 600;
+                                cursor: pointer;
+                                text-decoration: none;
+                                display: inline-block;
+                                transition: all 0.3s ease;
+                            }
+                            .action-btn:hover {
+                                transform: translateY(-2px);
+                                box-shadow: 0 8px 20px rgba(255, 102, 0, 0.4);
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="error-container">
+                            <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+                            <h1 class="title">Connection Refused</h1>
+                            <p class="subtitle">Unable to load content in iframe</p>
+                            <p class="description">
+                                The content from ${course ? course.title : 'the external source'} cannot be loaded in an iframe. 
+                                This may be due to security restrictions (X-Frame-Options) set by the content provider.
+                            </p>
+                            <p class="description">
+                                <strong>Solution:</strong> Click the button below to open the content in a new tab.
+                            </p>
+                            <a href="${course ? course.url : '#'}" target="_blank" class="action-btn">
+                                <i class="fas fa-external-link-alt"></i> Open in New Tab
+                            </a>
+                        </div>
+                    </body>
+                    </html>
+                `;
+                
+                this.iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(errorHtml);
+                Toast.show('Connection refused. Click "Open in New Tab" to view content.', 'error', 5000);
+            },
+
             // Load an external URL in the iframe (for intercepted new tab links)
-            loadExternalUrl(url) {
+            async loadExternalUrl(url) {
                 try {
                     if (this.iframe && url) {
                         console.log(`Loading external URL: ${url}`);
+                        
+                        // Simple direct load
                         this.iframe.src = url;
 
                         // Clear current course since we're navigating to external content
                         this.currentCourse = null;
+                        this.previousCourse = null;
                         this.updateActiveState(null);
+                        
+                        // Add to history
+                        this.addToHistory(url);
+                        this.updateNavigationControls();
 
                         return true;
                     }
@@ -1637,6 +2233,7 @@
                 } catch (error) {
                     console.error('Failed to load external URL:', error);
                     this.showErrorMessage(`Unable to load external content: ${url}`);
+                    Toast.show('Failed to load external content', 'error');
                     return false;
                 }
             },
@@ -1736,6 +2333,191 @@
             // Get all available courses
             getAllCourses() {
                 return courses;
+            },
+
+            // Show content controls
+            showContentControls() {
+                const controls = document.getElementById('content-controls');
+                if (controls && this.currentCourse) {
+                    controls.style.display = 'flex';
+                }
+            },
+
+            // Hide content controls
+            hideContentControls() {
+                const controls = document.getElementById('content-controls');
+                if (controls) {
+                    controls.style.display = 'none';
+                }
+            },
+
+            // Setup content control buttons
+            setupContentControls() {
+                const refreshBtn = document.getElementById('refresh-btn');
+                const fullscreenBtn = document.getElementById('fullscreen-btn');
+                const backBtn = document.getElementById('back-btn');
+                const forwardBtn = document.getElementById('forward-btn');
+                const contentArea = document.querySelector('.content-area');
+
+                // Refresh button
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', () => {
+                        if (this.currentCourse) {
+                            this.loadCourse(this.currentCourse);
+                        } else if (this.iframe && this.iframe.src) {
+                            this.loadExternalUrl(this.iframe.src);
+                        }
+                    });
+                }
+
+                // Fullscreen button
+                if (fullscreenBtn && contentArea) {
+                    fullscreenBtn.addEventListener('click', () => {
+                        if (!document.fullscreenElement) {
+                            contentArea.requestFullscreen().then(() => {
+                                contentArea.classList.add('fullscreen');
+                                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+                                fullscreenBtn.title = 'Exit Fullscreen (F11)';
+                            }).catch(err => {
+                                console.error('Error entering fullscreen:', err);
+                                Toast.show('Fullscreen not supported', 'warning');
+                            });
+                        } else {
+                            document.exitFullscreen().then(() => {
+                                contentArea.classList.remove('fullscreen');
+                                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                                fullscreenBtn.title = 'Toggle Fullscreen (F11)';
+                            });
+                        }
+                    });
+                }
+
+                // Back button
+                if (backBtn) {
+                    backBtn.addEventListener('click', () => {
+                        if (this.iframe && this.iframe.contentWindow) {
+                            try {
+                                this.iframe.contentWindow.history.back();
+                                this.updateNavigationControls();
+                            } catch (error) {
+                                // Cross-origin restriction
+                                if (this.historyIndex > 0) {
+                                    this.historyIndex--;
+                                    const url = this.iframeHistory[this.historyIndex];
+                                    if (url) {
+                                        this.loadExternalUrl(url);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Forward button
+                if (forwardBtn) {
+                    forwardBtn.addEventListener('click', () => {
+                        if (this.iframe && this.iframe.contentWindow) {
+                            try {
+                                this.iframe.contentWindow.history.forward();
+                                this.updateNavigationControls();
+                            } catch (error) {
+                                // Cross-origin restriction
+                                if (this.historyIndex < this.iframeHistory.length - 1) {
+                                    this.historyIndex++;
+                                    const url = this.iframeHistory[this.historyIndex];
+                                    if (url) {
+                                        this.loadExternalUrl(url);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Fullscreen change listener
+                document.addEventListener('fullscreenchange', () => {
+                    if (fullscreenBtn && contentArea) {
+                        if (!document.fullscreenElement) {
+                            contentArea.classList.remove('fullscreen');
+                            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                            fullscreenBtn.title = 'Toggle Fullscreen (F11)';
+                        }
+                    }
+                });
+            },
+
+            // Add URL to history
+            addToHistory(url) {
+                // Remove any future history if we're not at the end
+                if (this.historyIndex < this.iframeHistory.length - 1) {
+                    this.iframeHistory = this.iframeHistory.slice(0, this.historyIndex + 1);
+                }
+                
+                // Add new URL
+                this.iframeHistory.push(url);
+                this.historyIndex = this.iframeHistory.length - 1;
+                
+                // Limit history size
+                if (this.iframeHistory.length > 50) {
+                    this.iframeHistory.shift();
+                    this.historyIndex--;
+                }
+            },
+
+            // Update navigation controls state
+            updateNavigationControls() {
+                const backBtn = document.getElementById('back-btn');
+                const forwardBtn = document.getElementById('forward-btn');
+                
+                if (backBtn) {
+                    if (this.iframe && this.iframe.contentWindow) {
+                        try {
+                            backBtn.disabled = !this.iframe.contentWindow.history.length || 
+                                            this.historyIndex <= 0;
+                        } catch (error) {
+                            backBtn.disabled = this.historyIndex <= 0;
+                        }
+                    } else {
+                        backBtn.disabled = this.historyIndex <= 0;
+                    }
+                }
+                
+                if (forwardBtn) {
+                    if (this.iframe && this.iframe.contentWindow) {
+                        try {
+                            forwardBtn.disabled = this.historyIndex >= this.iframeHistory.length - 1;
+                        } catch (error) {
+                            forwardBtn.disabled = this.historyIndex >= this.iframeHistory.length - 1;
+                        }
+                    } else {
+                        forwardBtn.disabled = this.historyIndex >= this.iframeHistory.length - 1;
+                    }
+                }
+            },
+
+            // Show loading progress bar
+            showLoadingProgress() {
+                let progressBar = document.querySelector('.loading-progress');
+                if (!progressBar) {
+                    progressBar = document.createElement('div');
+                    progressBar.className = 'loading-progress active';
+                    document.querySelector('.content-area').appendChild(progressBar);
+                } else {
+                    progressBar.classList.add('active');
+                }
+            },
+
+            // Hide loading progress bar
+            hideLoadingProgress() {
+                const progressBar = document.querySelector('.loading-progress');
+                if (progressBar) {
+                    progressBar.classList.remove('active');
+                    setTimeout(() => {
+                        if (progressBar) {
+                            progressBar.style.width = '0%';
+                        }
+                    }, 300);
+                }
             }
         };
 
@@ -1942,6 +2724,101 @@
             }
         };
 
+        // Search functionality
+        const SearchManager = {
+            init() {
+                const searchInput = document.getElementById('course-search');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        this.filterCourses(e.target.value);
+                    });
+                    
+                    // Clear search on Escape
+                    searchInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape') {
+                            searchInput.value = '';
+                            this.filterCourses('');
+                            searchInput.blur();
+                        }
+                    });
+                }
+            },
+
+            filterCourses(query) {
+                const courseItems = document.querySelectorAll('.course-item');
+                const lowerQuery = query.toLowerCase().trim();
+                
+                if (!lowerQuery) {
+                    courseItems.forEach(item => {
+                        item.classList.remove('filtered');
+                    });
+                    return;
+                }
+
+                courseItems.forEach(item => {
+                    const courseLink = item.querySelector('.course-link');
+                    if (courseLink) {
+                        const title = courseLink.querySelector('.course-title')?.textContent.toLowerCase() || '';
+                        const description = courseLink.title.toLowerCase() || '';
+                        
+                        if (title.includes(lowerQuery) || description.includes(lowerQuery)) {
+                            item.classList.remove('filtered');
+                        } else {
+                            item.classList.add('filtered');
+                        }
+                    }
+                });
+            }
+        };
+
+        // Keyboard shortcuts
+        const KeyboardShortcuts = {
+            init() {
+                document.addEventListener('keydown', (e) => {
+                    // Ctrl/Cmd + R: Refresh
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                        e.preventDefault();
+                        const refreshBtn = document.getElementById('refresh-btn');
+                        if (refreshBtn && !refreshBtn.disabled) {
+                            refreshBtn.click();
+                        }
+                    }
+                    
+                    // F11: Toggle fullscreen
+                    if (e.key === 'F11') {
+                        e.preventDefault();
+                        const fullscreenBtn = document.getElementById('fullscreen-btn');
+                        if (fullscreenBtn) {
+                            fullscreenBtn.click();
+                        }
+                    }
+                    
+                    // Ctrl/Cmd + K: Focus search
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        const searchInput = document.getElementById('course-search');
+                        if (searchInput) {
+                            searchInput.focus();
+                            searchInput.select();
+                        }
+                    }
+                    
+                    // Escape: Close mobile menu, clear search
+                    if (e.key === 'Escape') {
+                        const navPanel = document.getElementById('navigation-panel');
+                        if (navPanel && navPanel.classList.contains('mobile-open')) {
+                            navPanel.classList.remove('mobile-open');
+                            const menuToggle = document.getElementById('menu-toggle');
+                            if (menuToggle) {
+                                const icon = menuToggle.querySelector('i');
+                                if (icon) icon.className = 'fas fa-bars';
+                            }
+                        }
+                    }
+                });
+            }
+        };
+
         // Application initialization
         document.addEventListener('DOMContentLoaded', function () {
             // Render navigation from course data
@@ -1958,6 +2835,12 @@
 
             // Initialize navigation toggle
             NavigationToggle.init();
+
+            // Initialize search
+            SearchManager.init();
+
+            // Initialize keyboard shortcuts
+            KeyboardShortcuts.init();
 
             console.log('Akamai API Gateway Learning Platform initialized successfully');
         });
