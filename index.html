@@ -196,6 +196,7 @@
             justify-content: center;
             transition: all 0.3s ease;
             font-size: 16px;
+            position: relative;
         }
 
         .header-btn:hover {
@@ -322,6 +323,13 @@
             border-radius: 10px;
             min-width: 18px;
             text-align: center;
+            box-shadow: 0 2px 8px rgba(245, 87, 108, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         /* Modal Overlay - Awwwards Style */
@@ -442,6 +450,99 @@
             margin: 0;
             color: #94a3b8;
             font-size: 13px;
+        }
+
+        /* Welcome Modal Styles */
+        .welcome-modal {
+            max-width: 600px;
+        }
+
+        .welcome-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .welcome-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounceIn 0.8s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .welcome-content h2 {
+            font-size: 32px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .welcome-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .welcome-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .welcome-feature i {
+            color: var(--akamai-blue);
+            font-size: 24px;
+            margin-top: 4px;
+        }
+
+        .welcome-feature-text h4 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .welcome-feature-text p {
+            margin: 0;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .welcome-btn {
+            background: linear-gradient(135deg, var(--akamai-blue), var(--akamai-dark-blue));
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 102, 204, 0.3);
+        }
+
+        .welcome-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 102, 204, 0.4);
         }
 
         /* Settings Sections */
@@ -1670,6 +1771,14 @@
             font-size: 13px;
             z-index: 20;
             border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .breadcrumb.hidden {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            transform: scale(0.9) translateY(-10px) !important;
         }
 
         [data-theme="dark"] .breadcrumb {
@@ -1719,6 +1828,81 @@
 
         .time-tracker i {
             color: var(--akamai-orange);
+        }
+
+        .time-tracker.hidden,
+        .content-controls.hidden {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+            transform: scale(0.9) !important;
+        }
+
+        .dismiss-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            transition: all 0.2s ease;
+            margin-left: 4px;
+            flex-shrink: 0;
+        }
+
+        .dismiss-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.15);
+        }
+
+        .dismiss-all-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 15px;
+            position: relative;
+            overflow: hidden;
+            margin-left: 8px;
+            border-left: 2px solid rgba(255, 255, 255, 0.3);
+            padding-left: 8px;
+        }
+
+        .dismiss-all-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .dismiss-all-btn:hover::before {
+            left: 100%;
+        }
+
+        .dismiss-all-btn:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .dismiss-all-btn:active {
+            transform: translateY(0);
         }
 
         /* Content Controls - Modern Design */
@@ -2304,6 +2488,52 @@
         </div>
     </header>
 
+    <!-- Welcome Modal -->
+    <div class="modal-overlay" id="welcome-modal">
+        <div class="modal-content welcome-modal">
+            <div class="welcome-content">
+                <div class="welcome-icon">🎓</div>
+                <h2>Welcome to Akamai Learning Platform!</h2>
+                <p>Your journey to mastering API Gateway and Zuplo starts here.</p>
+                
+                <div class="welcome-features">
+                    <div class="welcome-feature">
+                        <i class="fas fa-book-open"></i>
+                        <div class="welcome-feature-text">
+                            <h4>Interactive Courses</h4>
+                            <p>Learn at your own pace with guided tutorials</p>
+                        </div>
+                    </div>
+                    <div class="welcome-feature">
+                        <i class="fas fa-trophy"></i>
+                        <div class="welcome-feature-text">
+                            <h4>Track Progress</h4>
+                            <p>Earn achievements as you complete modules</p>
+                        </div>
+                    </div>
+                    <div class="welcome-feature">
+                        <i class="fas fa-bookmark"></i>
+                        <div class="welcome-feature-text">
+                            <h4>Bookmarks</h4>
+                            <p>Save your favorite lessons for quick access</p>
+                        </div>
+                    </div>
+                    <div class="welcome-feature">
+                        <i class="fas fa-clock"></i>
+                        <div class="welcome-feature-text">
+                            <h4>Time Tracking</h4>
+                            <p>Monitor your learning time and stay motivated</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="welcome-btn" onclick="WelcomeManager.close()">
+                    Get Started
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Settings Modal -->
     <div class="modal-overlay" id="settings-modal">
         <div class="modal-content settings-modal">
@@ -2396,6 +2626,17 @@
                         </div>
                         <label class="toggle-switch">
                             <input type="checkbox" id="breadcrumbs-toggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <span>Show Content Controls</span>
+                            <small>Display control buttons on content</small>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="controls-toggle" checked>
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -2588,6 +2829,9 @@
                 </button>
                 <button class="control-btn" id="forward-btn" title="Go Forward">
                     <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="dismiss-all-btn" id="dismiss-all" title="Hide All Controls (H)" onclick="ToolbarManager.dismissAll()">
+                    <i class="fas fa-eye-slash"></i>
                 </button>
             </div>
 
@@ -3443,7 +3687,15 @@
                 }, 1000);
 
                 const tracker = document.getElementById('time-tracker');
-                if (tracker) tracker.style.display = 'flex';
+                if (tracker) {
+                    tracker.style.display = 'flex';
+                    // Only show if settings allow it
+                    if (SettingsManager && SettingsManager.settings && !SettingsManager.settings.showTimeTracker) {
+                        tracker.classList.add('hidden');
+                    } else {
+                        tracker.classList.remove('hidden');
+                    }
+                }
             },
 
             stop() {
@@ -3556,7 +3808,8 @@
                 autoHide: false,
                 autoComplete: false,
                 showTimeTracker: true,
-                showBreadcrumbs: true
+                showBreadcrumbs: true,
+                showControls: true
             }),
 
             init() {
@@ -3570,20 +3823,35 @@
                 document.getElementById('autocomplete-toggle').checked = this.settings.autoComplete;
                 document.getElementById('timetracker-toggle').checked = this.settings.showTimeTracker;
                 document.getElementById('breadcrumbs-toggle').checked = this.settings.showBreadcrumbs;
+                const controlsToggle = document.getElementById('controls-toggle');
+                if (controlsToggle) {
+                    controlsToggle.checked = this.settings.showControls;
+                }
 
                 // Apply settings
                 if (!this.settings.animations) {
                     document.body.style.setProperty('--transition-speed', '0s');
                 }
+                
+                // Apply visibility settings immediately
+                this.applySettings();
             },
 
             setupEventListeners() {
-                const toggles = ['animations', 'autohide', 'autocomplete', 'timetracker', 'breadcrumbs'];
-                toggles.forEach(setting => {
-                    const toggle = document.getElementById(`${setting}-toggle`);
+                const toggleMap = {
+                    'animations': 'animations',
+                    'autohide': 'autoHide',
+                    'autocomplete': 'autoComplete',
+                    'timetracker': 'showTimeTracker',
+                    'breadcrumbs': 'showBreadcrumbs',
+                    'controls': 'showControls'
+                };
+                
+                Object.keys(toggleMap).forEach(toggleId => {
+                    const toggle = document.getElementById(`${toggleId}-toggle`);
                     if (toggle) {
                         toggle.addEventListener('change', (e) => {
-                            this.settings[setting.replace('-', '')] = e.target.checked;
+                            this.settings[toggleMap[toggleId]] = e.target.checked;
                             this.save();
                             this.applySettings();
                         });
@@ -3620,14 +3888,37 @@
 
                 // Apply time tracker visibility
                 const timeTracker = document.getElementById('time-tracker');
-                if (timeTracker && !this.settings.showTimeTracker) {
-                    timeTracker.style.display = 'none';
+                if (timeTracker) {
+                    // Only apply hidden class if setting is false
+                    // Don't remove hidden class here - let the course manager handle showing it
+                    if (!this.settings.showTimeTracker) {
+                        timeTracker.classList.add('hidden');
+                    } else if (this.settings.showTimeTracker && timeTracker.style.display !== 'none') {
+                        // Only remove hidden if the element is already visible (not display:none)
+                        timeTracker.classList.remove('hidden');
+                    }
+                }
+
+                // Apply controls visibility
+                const controls = document.getElementById('content-controls');
+                if (controls) {
+                    if (!this.settings.showControls) {
+                        controls.classList.add('hidden');
+                    } else if (this.settings.showControls && controls.style.display !== 'none') {
+                        // Only remove hidden if the element is already visible (not display:none)
+                        controls.classList.remove('hidden');
+                    }
                 }
 
                 // Apply breadcrumbs visibility
                 const breadcrumb = document.getElementById('breadcrumb');
-                if (breadcrumb && !this.settings.showBreadcrumbs) {
-                    breadcrumb.style.display = 'none';
+                if (breadcrumb) {
+                    if (!this.settings.showBreadcrumbs) {
+                        breadcrumb.classList.add('hidden');
+                    } else if (this.settings.showBreadcrumbs && breadcrumb.style.display !== 'none') {
+                        // Only remove hidden if the element is already visible (not display:none)
+                        breadcrumb.classList.remove('hidden');
+                    }
                 }
             },
 
@@ -4316,6 +4607,12 @@
                 
                 if (controls && this.currentCourse) {
                     controls.style.display = 'flex';
+                    // Only show if settings allow it
+                    if (SettingsManager && SettingsManager.settings && !SettingsManager.settings.showControls) {
+                        controls.classList.add('hidden');
+                    } else {
+                        controls.classList.remove('hidden');
+                    }
                 }
                 
                 if (breadcrumb && this.currentCourse) {
@@ -4324,6 +4621,12 @@
                         document.getElementById('breadcrumb-folder').textContent = course.folder || 'Courses';
                         document.getElementById('breadcrumb-course').textContent = course.title;
                         breadcrumb.style.display = 'flex';
+                        // Only show if settings allow it
+                        if (SettingsManager && SettingsManager.settings && !SettingsManager.settings.showBreadcrumbs) {
+                            breadcrumb.classList.add('hidden');
+                        } else {
+                            breadcrumb.classList.remove('hidden');
+                        }
                     }
                 }
 
@@ -4891,6 +5194,15 @@
                             if (markBtn) markBtn.click();
                         }
                     }
+
+                    // H: Toggle all controls visibility
+                    if (e.key === 'h' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                        const searchInput = document.getElementById('course-search');
+                        if (document.activeElement !== searchInput) {
+                            e.preventDefault();
+                            ToolbarManager.toggleAll();
+                        }
+                    }
                     
                     // Escape: Close mobile menu, clear search
                     if (e.key === 'Escape') {
@@ -4905,6 +5217,176 @@
                         }
                     }
                 });
+            }
+        };
+
+        // Welcome Manager - Shows welcome popup only once
+        const WelcomeManager = {
+            show() {
+                const modal = document.getElementById('welcome-modal');
+                if (modal) {
+                    modal.classList.add('show');
+                    document.body.style.overflow = 'hidden';
+                }
+            },
+
+            close() {
+                const modal = document.getElementById('welcome-modal');
+                if (modal) {
+                    modal.classList.remove('show');
+                    document.body.style.overflow = '';
+                    Storage.set('hasSeenWelcome', true);
+                }
+            },
+
+            init() {
+                // Show welcome modal only if user hasn't seen it before
+                if (!Storage.get('hasSeenWelcome', false)) {
+                    setTimeout(() => {
+                        this.show();
+                    }, 500);
+                }
+            }
+        };
+
+        // Toolbar Manager - Handles dismissing controls and timer
+        const ToolbarManager = {
+            dismissControls() {
+                const controls = document.getElementById('content-controls');
+                if (controls) {
+                    controls.classList.add('hidden');
+                    // Update settings
+                    if (SettingsManager && SettingsManager.settings) {
+                        SettingsManager.settings.showControls = false;
+                        Storage.set('app-settings', SettingsManager.settings);
+                    }
+                    Toast.show('Controls hidden. You can re-enable them in Settings.', 'info', 3000);
+                }
+            },
+
+            dismissTimer() {
+                const timer = document.getElementById('time-tracker');
+                if (timer) {
+                    timer.classList.add('hidden');
+                    // Update settings
+                    if (SettingsManager && SettingsManager.settings) {
+                        SettingsManager.settings.showTimeTracker = false;
+                        Storage.set('app-settings', SettingsManager.settings);
+                    }
+                    Toast.show('Timer hidden. You can re-enable it in Settings.', 'info', 3000);
+                }
+            },
+
+            dismissBreadcrumb() {
+                const breadcrumb = document.getElementById('breadcrumb');
+                if (breadcrumb) {
+                    breadcrumb.classList.add('hidden');
+                    // Update settings
+                    if (SettingsManager && SettingsManager.settings) {
+                        SettingsManager.settings.showBreadcrumbs = false;
+                        Storage.set('app-settings', SettingsManager.settings);
+                    }
+                }
+            },
+
+            dismissAll() {
+                // Hide all UI elements at once
+                const controls = document.getElementById('content-controls');
+                const timer = document.getElementById('time-tracker');
+                const breadcrumb = document.getElementById('breadcrumb');
+
+                let hiddenCount = 0;
+
+                // Helper function to check if element is actually visible
+                const isVisible = (el) => {
+                    if (!el) return false;
+                    const style = window.getComputedStyle(el);
+                    return style.display !== 'none' && 
+                           style.visibility !== 'hidden' && 
+                           !el.classList.contains('hidden');
+                };
+
+                if (isVisible(controls)) {
+                    controls.classList.add('hidden');
+                    hiddenCount++;
+                }
+
+                if (isVisible(timer)) {
+                    timer.classList.add('hidden');
+                    hiddenCount++;
+                }
+
+                if (isVisible(breadcrumb)) {
+                    breadcrumb.classList.add('hidden');
+                    hiddenCount++;
+                }
+
+                // Update settings
+                if (SettingsManager && SettingsManager.settings) {
+                    SettingsManager.settings.showControls = false;
+                    SettingsManager.settings.showTimeTracker = false;
+                    SettingsManager.settings.showBreadcrumbs = false;
+                    Storage.set('app-settings', SettingsManager.settings);
+                }
+
+                if (hiddenCount > 0) {
+                    Toast.show('🙈 All controls hidden. Press H to toggle or use Settings to restore.', 'info', 4000);
+                } else {
+                    Toast.show('All controls are already hidden.', 'info', 2000);
+                }
+            },
+
+            showAll() {
+                // Show all UI elements
+                const controls = document.getElementById('content-controls');
+                const timer = document.getElementById('time-tracker');
+                const breadcrumb = document.getElementById('breadcrumb');
+
+                if (controls) controls.classList.remove('hidden');
+                if (timer) timer.classList.remove('hidden');
+                if (breadcrumb) breadcrumb.classList.remove('hidden');
+
+                // Update settings
+                if (SettingsManager && SettingsManager.settings) {
+                    SettingsManager.settings.showControls = true;
+                    SettingsManager.settings.showTimeTracker = true;
+                    SettingsManager.settings.showBreadcrumbs = true;
+                    Storage.set('app-settings', SettingsManager.settings);
+                    // Reload settings UI
+                    SettingsManager.loadSettings();
+                }
+
+                Toast.show('👁️ All controls restored!', 'success', 3000);
+            },
+
+            toggleAll() {
+                // Toggle visibility of all controls
+                const controls = document.getElementById('content-controls');
+                const isHidden = controls && controls.classList.contains('hidden');
+                
+                if (isHidden) {
+                    this.showAll();
+                } else {
+                    this.dismissAll();
+                }
+            },
+
+            restoreControls() {
+                const controls = document.getElementById('content-controls');
+                if (controls) {
+                    controls.classList.remove('hidden');
+                }
+            },
+
+            restoreTimer() {
+                const timer = document.getElementById('time-tracker');
+                if (timer) {
+                    timer.classList.remove('hidden');
+                }
+            },
+
+            init() {
+                // Initialization handled by SettingsManager
             }
         };
 
@@ -4951,13 +5433,11 @@
             // Setup header controls
             setupHeaderControls();
 
-            // Welcome message for first-time users
-            if (!Storage.get('welcomed', false)) {
-                setTimeout(() => {
-                    Toast.show('Welcome to Akamai Learning Platform! 🎉', 'success', 4000);
-                    Storage.set('welcomed', true);
-                }, 1000);
-            }
+            // Initialize toolbar manager
+            ToolbarManager.init();
+
+            // Initialize and show welcome modal for first-time users
+            WelcomeManager.init();
 
             console.log('🚀 Akamai API Gateway Learning Platform v2.0 initialized successfully');
         });
