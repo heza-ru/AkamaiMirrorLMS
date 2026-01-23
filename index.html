@@ -3689,11 +3689,13 @@
                 const tracker = document.getElementById('time-tracker');
                 if (tracker) {
                     tracker.style.display = 'flex';
-                    // Only show if settings allow it
-                    if (SettingsManager && SettingsManager.settings && !SettingsManager.settings.showTimeTracker) {
-                        tracker.classList.add('hidden');
-                    } else {
+                    // Check if settings explicitly say to hide (defaults to showing)
+                    const shouldShowTracker = !SettingsManager || !SettingsManager.settings || 
+                                            SettingsManager.settings.showTimeTracker !== false;
+                    if (shouldShowTracker) {
                         tracker.classList.remove('hidden');
+                    } else {
+                        tracker.classList.add('hidden');
                     }
                 }
             },
@@ -3813,6 +3815,11 @@
             }),
 
             init() {
+                // Migrate old settings - ensure showControls exists
+                if (this.settings.showControls === undefined) {
+                    this.settings.showControls = true;
+                    this.save();
+                }
                 this.loadSettings();
                 this.setupEventListeners();
             },
@@ -4607,11 +4614,13 @@
                 
                 if (controls && this.currentCourse) {
                     controls.style.display = 'flex';
-                    // Only show if settings allow it
-                    if (SettingsManager && SettingsManager.settings && !SettingsManager.settings.showControls) {
-                        controls.classList.add('hidden');
-                    } else {
+                    // Check if settings explicitly say to hide (defaults to showing)
+                    const shouldShowControls = !SettingsManager || !SettingsManager.settings || 
+                                              SettingsManager.settings.showControls !== false;
+                    if (shouldShowControls) {
                         controls.classList.remove('hidden');
+                    } else {
+                        controls.classList.add('hidden');
                     }
                 }
                 
@@ -4621,11 +4630,13 @@
                         document.getElementById('breadcrumb-folder').textContent = course.folder || 'Courses';
                         document.getElementById('breadcrumb-course').textContent = course.title;
                         breadcrumb.style.display = 'flex';
-                        // Only show if settings allow it
-                        if (SettingsManager && SettingsManager.settings && !SettingsManager.settings.showBreadcrumbs) {
-                            breadcrumb.classList.add('hidden');
-                        } else {
+                        // Check if settings explicitly say to hide (defaults to showing)
+                        const shouldShowBreadcrumbs = !SettingsManager || !SettingsManager.settings || 
+                                                     SettingsManager.settings.showBreadcrumbs !== false;
+                        if (shouldShowBreadcrumbs) {
                             breadcrumb.classList.remove('hidden');
+                        } else {
+                            breadcrumb.classList.add('hidden');
                         }
                     }
                 }
